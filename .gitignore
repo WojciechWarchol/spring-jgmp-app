@@ -1,0 +1,18 @@
+# Default ignored files
+/shelf/
+/.idea/workspace.xml
+
+### build files ###
+target/
+
+### Java files ###
+*.class
+
+### Log file ###
+*.log
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
