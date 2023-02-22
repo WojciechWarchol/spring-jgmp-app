@@ -3,12 +3,10 @@ package com.wojto.dao;
 import com.wojto.model.Event;
 import com.wojto.model.EventImpl;
 import com.wojto.storage.EventInMemoryStorage;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -30,10 +28,10 @@ import static org.mockito.Mockito.when;
 class InMemoryEventDaoTest {
 
 //    @InjectMocks
-    @Autowired
+//    @Autowired
     private InMemoryEventDao inMemoryEventDAO;
 //    @Mock
-    @Autowired
+//    @Autowired
     private EventInMemoryStorage eventInMemoryStorageMock;
     private Pageable pageable = PageRequest.of(0, 10);;
 

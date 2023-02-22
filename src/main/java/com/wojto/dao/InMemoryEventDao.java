@@ -2,6 +2,8 @@ package com.wojto.dao;
 
 import com.wojto.model.Event;
 import com.wojto.storage.EventInMemoryStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +12,8 @@ import java.util.Date;
 import java.util.List;
 
 public class InMemoryEventDao implements EventDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryEventDao.class);
 
     EventInMemoryStorage eventInMemoryStorage;
 
@@ -54,10 +58,10 @@ public class InMemoryEventDao implements EventDao {
         return eventInMemoryStorage.deleteEvent(eventId);
     }
 
-    private static Page<Event> convertListToPage(Pageable pageable, List<Event> eventsFoundByTitle) {
+    private static Page<Event> convertListToPage(Pageable pageable, List<Event> listOfEvents) {
         int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), eventsFoundByTitle.size());
-        Page<Event> page = new PageImpl<Event>(eventsFoundByTitle.subList(start, end), pageable, eventsFoundByTitle.size());
+        int end = Math.min((start + pageable.getPageSize()), listOfEvents.size());
+        Page<Event> page = new PageImpl<Event>(listOfEvents.subList(start, end), pageable, listOfEvents.size());
         return page;
     }
 

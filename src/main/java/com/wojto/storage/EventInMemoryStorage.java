@@ -37,7 +37,8 @@ public class EventInMemoryStorage {
     }
 
     public Event addOrUpdateEvent(Event event) {
-        return eventMap.put(event.getId(), event);
+        eventMap.put(event.getId(), event);
+        return event;
     }
 
     public boolean deleteEvent(long eventId) {
