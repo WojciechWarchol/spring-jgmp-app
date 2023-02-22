@@ -61,7 +61,7 @@ public class TicketInMemoryStorage {
         return TOTAL_TICKET_COUNT;
     }
 
-    public boolean deleteTicket(long TicketId) {
-        return ticketMap.remove(TicketId).getId() == TicketId;
+    public boolean deleteTicket(long ticketId) {
+        return ticketMap.remove(ticketId).getId() == ticketId;
     }
 }

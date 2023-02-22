@@ -24,6 +24,17 @@
     </bean>
 
 
+    <bean id="userInMemoryStorage" class="com.wojto.storage.UserInMemoryStorage" autowire="byType"/>
+
+    <bean id="inMemoryUserDao" class="com.wojto.dao.InMemoryUserDao" autowire="byType">
+        <property name="userInMemoryStorage" ref="userInMemoryStorage" />
+    </bean>
+
+    <bean id="userService" class="com.wojto.service.UserService" autowire="byType">
+        <property name="userDao" ref="inMemoryUserDao" />
+    </bean>
+
+
     <bean id="ticketInMemoryStorage" class="com.wojto.storage.TicketInMemoryStorage" autowire="byType"/>
 
     <bean id="inMemoryTicketDao" class="com.wojto.dao.InMemoryTicketDao" autowire="byType">
