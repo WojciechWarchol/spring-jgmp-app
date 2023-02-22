@@ -1,5 +1,7 @@
 package com.wojto;
 
+import com.wojto.facade.BookingFacade;
+import com.wojto.facade.BookingFacadeImpl;
 import com.wojto.model.Event;
 import com.wojto.model.EventImpl;
 import com.wojto.model.Ticket;
@@ -38,6 +40,8 @@ public class EventApp {
         UserService userService = (UserService) context.getBean("userService");
         userService.createUser(new UserImpl(1, "Szczepan", "szczepan@gmail.com"));
         System.out.println(userService.getUserById(1).getName());
+
+        BookingFacadeImpl bookingFacade = (BookingFacadeImpl) context.getBean("bookingFacade");
     }
 
 }

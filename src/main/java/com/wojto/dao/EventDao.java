@@ -14,12 +14,12 @@ public interface EventDao {
 
     public Page<Event> getEventsByTitle(String title, Pageable pageable);
 
-    Page<Event> getEventsForDay(Date day, Pageable pageable);
+    public Page<Event> getEventsForDay(Date day, Pageable pageable);
 
-    Event createEvent(Event event);
+    public Event createEvent(Event event);
 
-    Event updateEvent(Event event);
+    public Event updateEvent(Event event);
 
-    boolean deleteEvent(long eventId);
+    public boolean deleteEvent(long eventId);
 
 }

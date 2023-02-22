@@ -45,4 +45,11 @@
         <property name="ticketDao" ref="inMemoryTicketDao" />
     </bean>
 
+
+    <bean id="bookingFacade" class="com.wojto.facade.BookingFacadeImpl">
+        <constructor-arg name="eventService" ref="eventService" />
+        <constructor-arg name="userService" ref="userService" />
+        <constructor-arg name="ticketService" ref="ticketService" />
+    </bean>
+
 </beans>
