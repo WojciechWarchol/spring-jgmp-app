@@ -4,24 +4,50 @@ import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
 import com.wojto.storage.TicketInMemoryStorage;
+import com.wojto.storage.mappers.TicketMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class InMemoryTicketDao implements TicketDao {
+public class InMemoryTicketDao implements TicketDao, InMemoryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryTicketDao.class);
 
     TicketInMemoryStorage ticketInMemoryStorage;
 
-    public InMemoryTicketDao() {
+    private static String fileName;
+    private static final String[] PARAM_NAMES = new String[] { "id", "eventId", "userId", "category", "place" };
+    private static final Class<Ticket> SUPPORTED_CLASS_TYPE = Ticket.class;
+
+    @Override
+    public String getFileName() {
+        return fileName;
+    }
+
+    public static void setFileName(String fileName) {
+        InMemoryTicketDao.fileName = fileName;
+    }
+
+    @Override
+    public String[] getParameterNames() {
+        return PARAM_NAMES;
+    }
+
+    @Override
+    public Class<Ticket> getClassType() {
+        return SUPPORTED_CLASS_TYPE;
+    }
+
+    @Override
+    public FieldSetMapper getMapperForObjects() {
+        return new TicketMapper();
     }
 
     @Override

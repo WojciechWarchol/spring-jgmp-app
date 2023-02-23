@@ -12,15 +12,18 @@
     http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="com.wojto"/>
+    <context:property-placeholder location="classpath:dao.properties"/>
+
+    <bean id="InMemoryDaoPostProcessor" class="com.wojto.storage.postprocessor.InMemoryDaoPostProcessor" />
 
     <bean id="eventInMemoryStorage" class="com.wojto.storage.EventInMemoryStorage" autowire="byType"/>
 
     <bean id="inMemoryEventDao" class="com.wojto.dao.InMemoryEventDao" autowire="byType">
         <property name="eventInMemoryStorage" ref="eventInMemoryStorage" />
+        <property name="fileName" value="${dao.inmemory.event.contentfile}" />
     </bean>
 
     <bean id="eventService"  class="com.wojto.service.EventService" autowire="byType">
-        <property name="eventDao" ref="inMemoryEventDao" />
     </bean>
 
 
@@ -28,10 +31,10 @@
 
     <bean id="inMemoryUserDao" class="com.wojto.dao.InMemoryUserDao" autowire="byType">
         <property name="userInMemoryStorage" ref="userInMemoryStorage" />
+        <property name="fileName" value="${dao.inmemory.user.contentfile}" />
     </bean>
 
     <bean id="userService" class="com.wojto.service.UserService" autowire="byType">
-        <property name="userDao" ref="inMemoryUserDao" />
     </bean>
 
 
@@ -39,10 +42,10 @@
 
     <bean id="inMemoryTicketDao" class="com.wojto.dao.InMemoryTicketDao" autowire="byType">
         <property name="ticketInMemoryStorage" ref="ticketInMemoryStorage" />
+        <property name="fileName" value="${dao.inmemory.ticket.contentfile}" />
     </bean>
 
     <bean id="ticketService" class="com.wojto.service.TicketService" autowire="byType">
-        <property name="ticketDao" ref="inMemoryTicketDao" />
     </bean>
 
 
@@ -51,5 +54,6 @@
         <constructor-arg name="userService" ref="userService" />
         <constructor-arg name="ticketService" ref="ticketService" />
     </bean>
+
 
 </beans>

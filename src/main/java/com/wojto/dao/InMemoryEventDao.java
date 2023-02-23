@@ -2,8 +2,10 @@ package com.wojto.dao;
 
 import com.wojto.model.Event;
 import com.wojto.storage.EventInMemoryStorage;
+import com.wojto.storage.mappers.EventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -11,11 +13,39 @@ import org.springframework.data.domain.Pageable;
 import java.util.Date;
 import java.util.List;
 
-public class InMemoryEventDao implements EventDao {
+public class InMemoryEventDao implements EventDao, InMemoryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryEventDao.class);
 
     EventInMemoryStorage eventInMemoryStorage;
+
+    private static String fileName;
+    private static final String[] PARAM_NAMES = new String[] { "id", "title", "date" };
+    private static final Class<Event> SUPPORTED_CLASS_TYPE = Event.class;
+
+    @Override
+    public String getFileName() {
+        return fileName;
+    }
+
+    public static void setFileName(String fileName) {
+        InMemoryEventDao.fileName = fileName;
+    }
+
+    @Override
+    public String[] getParameterNames() {
+        return PARAM_NAMES;
+    }
+
+    @Override
+    public Class<Event> getClassType() {
+        return SUPPORTED_CLASS_TYPE;
+    }
+
+    @Override
+    public FieldSetMapper getMapperForObjects() {
+        return new EventMapper();
+    }
 
     @Override
     public Page<Event> getAllEvents(Pageable pageable) {
