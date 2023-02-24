@@ -21,27 +21,33 @@ public class UserInMemoryStorage {
     }
 
     public List<User> getAllUsers() {
+        LOGGER.info("Getting all users, current number: " + userMap.values().size());
         return new ArrayList<>(userMap.values());
     }
 
-    public User getUserById(long id) {
-        return userMap.get(id);
+    public User getUserById(long userId) {
+        LOGGER.info("Retrieving user with id: " + userId + " from in memory storage.");
+        return userMap.get(userId);
     }
 
     public User getUserByEmail(String email) {
+        LOGGER.info("Retrieving user with email: " + email + " from in memory storage.");
         return userMap.values().stream().filter(u -> u.getEmail().equals(email)).findFirst().get();
     }
 
     public List<User> getUsersByName(String name, Pageable pageable) {
+        LOGGER.info("Retrieving users containing name: " + name + " from in memory storage.");
         return userMap.values().stream().filter(u -> u.getName().contains(name)).collect(Collectors.toList());
     }
 
     public User createOrUpdateUser(User user) {
+        LOGGER.info("Adding user to in memory db: " + user);
         userMap.put(user.getId(), user);
         return user;
     }
 
     public boolean deleteUser(long userId) {
+        LOGGER.info("deleting user with id: " + userId);
         return userMap.remove(userId).getId() == userId;
     }
 }

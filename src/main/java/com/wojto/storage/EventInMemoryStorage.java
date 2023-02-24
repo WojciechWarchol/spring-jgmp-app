@@ -18,18 +18,22 @@ public class EventInMemoryStorage {
     }
 
     public List<Event> getAllEvents() {
+        LOGGER.info("Getting all events, current number: " + eventMap.values().size());
         return new ArrayList<>(eventMap.values());
     }
 
     public Event getEventById(long eventId) {
+        LOGGER.info("Retrieving event with id: " + eventId + " from in memory storage.");
         return eventMap.get(eventId);
     }
 
     public List<Event> getEventsByTitle(String title) {
+        LOGGER.info("Retrieving events containing: \"" + title + "\" in title.");
         return eventMap.values().stream().filter(e -> e.getTitle().contains(title)).collect(Collectors.toList());
     }
 
     public List<Event> getEventsForDay(Date day) {
+        LOGGER.info("Retrieving events for day: " + day);
         return eventMap.values().stream()
                 .filter(e -> e.getDate().toInstant().truncatedTo(ChronoUnit.DAYS)
                         .equals(day.toInstant().truncatedTo(ChronoUnit.DAYS)))
@@ -37,11 +41,13 @@ public class EventInMemoryStorage {
     }
 
     public Event addOrUpdateEvent(Event event) {
+        LOGGER.info("Adding event to in memory db: " + event);
         eventMap.put(event.getId(), event);
         return event;
     }
 
     public boolean deleteEvent(long eventId) {
+        LOGGER.info("deleting event with id: " + eventId);
         return eventMap.remove(eventId).getId() == eventId;
     }
 }

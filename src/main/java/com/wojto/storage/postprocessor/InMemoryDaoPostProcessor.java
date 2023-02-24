@@ -25,6 +25,7 @@ public class InMemoryDaoPostProcessor implements BeanPostProcessor {
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof InMemoryDao) {
             if (bean instanceof InMemoryEventDao) {
+                LOGGER.info("Post Processor for InMemoryEventDao initialized. Filling in memory DB.");
                 InMemoryEventDao dao = (InMemoryEventDao) bean;
                 FlatFileItemReader<Event> reader = createReaderForInMemoryDao(dao);
                 reader.open(new ExecutionContext());
@@ -44,7 +45,9 @@ public class InMemoryDaoPostProcessor implements BeanPostProcessor {
                     }
                 }
                 reader.close();
+                LOGGER.debug("Finished initializing data for events.");
             } else if (bean instanceof InMemoryUserDao) {
+                LOGGER.info("Post Processor for InMemoryUserDao initialized. Filling in memory DB.");
                 InMemoryUserDao dao = (InMemoryUserDao) bean;
                 FlatFileItemReader<User> reader = createReaderForInMemoryDao(dao);
                 reader.open(new ExecutionContext());
@@ -64,7 +67,9 @@ public class InMemoryDaoPostProcessor implements BeanPostProcessor {
                     }
                 }
                 reader.close();
+                LOGGER.debug("Finished initializing data for users.");
             } else if (bean instanceof InMemoryTicketDao) {
+                LOGGER.info("Post Processor for InMemoryTicketDao initialized. Filling in memory DB.");
                 InMemoryTicketDao dao = (InMemoryTicketDao) bean;
                 FlatFileItemReader<Ticket> reader = createReaderForInMemoryDao(dao);
                 reader.open(new ExecutionContext());
@@ -84,12 +89,14 @@ public class InMemoryDaoPostProcessor implements BeanPostProcessor {
                     }
                 }
                 reader.close();
+                LOGGER.debug("Finished initializing data for tickets.");
             }
         }
         return bean;
     }
 
     private <C> FlatFileItemReader<C> createReaderForInMemoryDao(InMemoryDao inMemoryDao) {
+        LOGGER.debug("Creating FlatFileReader for " + inMemoryDao.getFileName());
         FlatFileItemReader<C> reader = new FlatFileItemReader<>();
         reader.setResource(new ClassPathResource(inMemoryDao.getFileName()));
         reader.setLinesToSkip(1);
@@ -102,6 +109,7 @@ public class InMemoryDaoPostProcessor implements BeanPostProcessor {
         lineMapper.setFieldSetMapper(inMemoryDao.getMapperForObjects());
 
         reader.setLineMapper(lineMapper);
+        LOGGER.debug("Finished creation of FlatFileReader for " + inMemoryDao.getFileName());
 
         return reader;
     }

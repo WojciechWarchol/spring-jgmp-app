@@ -1,6 +1,7 @@
 package com.wojto.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class EventImpl implements Event{
 
@@ -45,5 +46,34 @@ public class EventImpl implements Event{
     @Override
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EventImpl event = (EventImpl) o;
+
+        if (id != event.id) return false;
+        if (!Objects.equals(title, event.title)) return false;
+        return Objects.equals(date, event.date);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", date=" + date +
+                '}';
     }
 }

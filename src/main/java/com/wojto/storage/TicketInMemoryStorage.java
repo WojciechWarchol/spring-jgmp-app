@@ -24,14 +24,17 @@ public class TicketInMemoryStorage {
     }
 
     public List<Ticket> getAllTickets() {
+        LOGGER.info("Getting all tickets, current number: " + ticketMap.values().size());
         return new ArrayList<>(ticketMap.values());
     }
 
-    public Ticket getTicketById(long TicketId) {
-        return ticketMap.get(TicketId);
+    public Ticket getTicketById(long ticketId) {
+        LOGGER.info("Retrieving ticket with id: " + ticketId + " from in memory storage.");
+        return ticketMap.get(ticketId);
     }
 
     public List<Ticket> getBooketTickets(User user, Pageable pageable) {
+        LOGGER.info("Retrieving tickets booked for user: " + user);
         long userId = user.getId();
         List<Ticket> ticketsForUser = new ArrayList<>();
         for (Ticket ticket : getAllTickets()) {
@@ -43,6 +46,7 @@ public class TicketInMemoryStorage {
     }
 
     public List<Ticket> getBooketTickets(Event event, Pageable pageable) {
+        LOGGER.info("Retrieving tickets booked for event: " + event);
         long eventId = event.getId();
         return getAllTickets().stream()
                 .filter(t -> t.getEventId() == eventId)
@@ -50,6 +54,7 @@ public class TicketInMemoryStorage {
     }
 
     public Ticket addTicket(Ticket ticket) {
+        LOGGER.info("Adding ticket to in memory db: " + ticket);
         if (ticket.getId() == 0) {
             ticket.setId(++TOTAL_TICKET_COUNT);
         }
@@ -58,10 +63,12 @@ public class TicketInMemoryStorage {
     }
 
     public long getNewTicketId() {
+        LOGGER.info("Generating new ticket if: " + TOTAL_TICKET_COUNT);
         return TOTAL_TICKET_COUNT;
     }
 
     public boolean deleteTicket(long ticketId) {
+        LOGGER.info("deleting ticket with id: " + ticketId);
         return ticketMap.remove(ticketId).getId() == ticketId;
     }
 }

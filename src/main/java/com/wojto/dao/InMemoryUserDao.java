@@ -48,25 +48,36 @@ public class InMemoryUserDao implements UserDao, InMemoryDao{
 
     @Override
     public Page<User> getAllUser(Pageable pageable) {
+        LOGGER.info("Calling in memory storage to retrieve all users.");
         List<User> allUsersList = userInMemoryStorage.getAllUsers();
+        LOGGER.info("Retrieved list of all users: " + allUsersList );
         Page<User> page = convertListToPage(pageable, allUsersList);
         return page;
     }
 
     @Override
     public User getUserById(long userId) {
-        return userInMemoryStorage.getUserById(userId);
+        LOGGER.info("Calling in memory storage for user with id: " + userId);
+        User user = userInMemoryStorage.getUserById(userId);
+        LOGGER.info("Retrieved user from in memory storage: " + user);
+        return user;
+
     }
 
     @Override
     public User getUserByEmail(String email) {
-        return userInMemoryStorage.getUserByEmail(email);
+        LOGGER.info("Calling in memory storage for user with email: " + email);
+        User user = userInMemoryStorage.getUserByEmail(email);
+        LOGGER.info("Retrieved user from in memory storage: " + user);
+        return user;
     }
 
     @Override
     public Page<User> getUsersByName(String name, Pageable pageable) {
-        List<User> userList = userInMemoryStorage.getUsersByName(name, pageable);
-        Page<User> page = convertListToPage(pageable, userList);
+        LOGGER.info("Calling in memory storage for user containing \"" + name + "\" in name.");
+        List<User> usersFoundByName = userInMemoryStorage.getUsersByName(name, pageable);
+        LOGGER.info("Retrieved users from in memory storage: " + usersFoundByName);
+        Page<User> page = convertListToPage(pageable, usersFoundByName);
         return page;
     }
 
@@ -86,9 +97,11 @@ public class InMemoryUserDao implements UserDao, InMemoryDao{
     }
 
     private static Page<User> convertListToPage(Pageable pageable, List<User> listOfUsers) {
+        LOGGER.debug("Converting user List to Page");
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), listOfUsers.size());
         Page<User> page = new PageImpl<User>(listOfUsers.subList(start, end), pageable, listOfUsers.size());
+        LOGGER.debug("Created page of users: " + page);
         return page;
     }
 
