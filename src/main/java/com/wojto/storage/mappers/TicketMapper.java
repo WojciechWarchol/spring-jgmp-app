@@ -19,6 +19,7 @@ public class TicketMapper implements FieldSetMapper<Ticket> {
         ticket.setEventId(fieldSet.readLong("eventId"));
         ticket.setUserId(fieldSet.readLong("userId"));
         ticket.setCategory(Ticket.Category.valueOf(fieldSet.readString("category")));
+        ticket.setPlace(fieldSet.readInt("place"));
         LOGGER.debug("Created ticket: " + ticket);
         return ticket;
     }

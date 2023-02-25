@@ -48,6 +48,6 @@ public class UserInMemoryStorage {
 
     public boolean deleteUser(long userId) {
         LOGGER.info("deleting user with id: " + userId);
-        return userMap.remove(userId).getId() == userId;
+        return userMap.remove(userId) != null;
     }
 }

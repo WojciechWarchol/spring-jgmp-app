@@ -48,6 +48,6 @@ public class EventInMemoryStorage {
 
     public boolean deleteEvent(long eventId) {
         LOGGER.info("deleting event with id: " + eventId);
-        return eventMap.remove(eventId).getId() == eventId;
+        return eventMap.remove(eventId) != null;
     }
 }

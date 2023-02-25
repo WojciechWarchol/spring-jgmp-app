@@ -14,7 +14,9 @@
     <context:component-scan base-package="com.wojto"/>
     <context:property-placeholder location="classpath:dao.properties"/>
 
+
     <bean id="InMemoryDaoPostProcessor" class="com.wojto.storage.postprocessor.InMemoryDaoPostProcessor" />
+
 
     <bean id="eventInMemoryStorage" class="com.wojto.storage.EventInMemoryStorage" autowire="byType"/>
 

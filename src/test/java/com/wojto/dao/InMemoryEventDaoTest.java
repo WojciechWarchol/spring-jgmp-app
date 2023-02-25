@@ -5,6 +5,7 @@ import com.wojto.model.EventImpl;
 import com.wojto.storage.EventInMemoryStorage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -27,11 +28,9 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration("file:src/main/java/ApplicationContext.xml")
 class InMemoryEventDaoTest {
 
-//    @InjectMocks
-//    @Autowired
+    @InjectMocks
     private InMemoryEventDao inMemoryEventDAO;
-//    @Mock
-//    @Autowired
+    @Mock
     private EventInMemoryStorage eventInMemoryStorageMock;
     private Pageable pageable = PageRequest.of(0, 10);;
 
