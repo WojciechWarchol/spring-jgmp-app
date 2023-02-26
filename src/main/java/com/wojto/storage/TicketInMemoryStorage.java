@@ -69,6 +69,6 @@ public class TicketInMemoryStorage {
 
     public boolean deleteTicket(long ticketId) {
         LOGGER.info("deleting ticket with id: " + ticketId);
-        return ticketMap.remove(ticketId).getId() == ticketId;
+        return ticketMap.remove(ticketId) != null;
     }
 }

@@ -81,11 +81,18 @@ class EventInMemoryStorageTest {
 
     @Test
     void deleteEvent() {
-        eventInMemoryStorage.deleteEvent(1);
+        boolean eventDeleted = eventInMemoryStorage.deleteEvent(1);
         List<Event> foundEvents = eventInMemoryStorage.getAllEvents();
+        assertTrue(eventDeleted);
         assertEquals(2, foundEvents.size());
         assertFalse(foundEvents.contains(event1));
     }
 
-    // TODO add test cases for failed operations maybe?
+    @Test
+    void noEventDeletedWhenProvidedIdDoesntExist() {
+        boolean eventDeleted = eventInMemoryStorage.deleteEvent(5);
+        List<Event> foundEvents = eventInMemoryStorage.getAllEvents();
+        assertFalse(eventDeleted);
+        assertEquals(3, foundEvents.size());
+    }
 }
