@@ -55,16 +55,17 @@ public class TicketInMemoryStorage {
 
     public Ticket addTicket(Ticket ticket) {
         LOGGER.info("Adding ticket to in memory db: " + ticket);
-        if (ticket.getId() == 0) {
-            ticket.setId(++TOTAL_TICKET_COUNT);
+        TOTAL_TICKET_COUNT++;
+        if (ticket.getId() < TOTAL_TICKET_COUNT) {
+            ticket.setId(TOTAL_TICKET_COUNT);
         }
         ticketMap.put(ticket.getId(), ticket);
         return ticket;
     }
 
     public long getNewTicketId() {
-        LOGGER.info("Generating new ticket if: " + TOTAL_TICKET_COUNT);
-        return TOTAL_TICKET_COUNT;
+        LOGGER.info("Generating new ticket id: " + TOTAL_TICKET_COUNT);
+        return TOTAL_TICKET_COUNT + 1;
     }
 
     public boolean deleteTicket(long ticketId) {

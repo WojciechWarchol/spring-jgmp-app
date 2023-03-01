@@ -162,7 +162,7 @@ class BookingFacadeTest {
         Ticket.Category category = Ticket.Category.BAR;
         Ticket ticket = bookingFacade.bookTicket(userId, eventId, place, category);
 
-        assertEquals(userId, ticket.getId());
+        assertEquals(userId, ticket.getUserId());
         assertEquals(eventId, ticket.getEventId());
         assertEquals(place, ticket.getPlace());
         assertEquals(category, ticket.getCategory());
