@@ -4,15 +4,19 @@ import com.wojto.dao.UserDao;
 import com.wojto.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
+    @Autowired
     UserDao userDao;
 
     public List<User> getAllUser(int pageSize, int pageNum) {

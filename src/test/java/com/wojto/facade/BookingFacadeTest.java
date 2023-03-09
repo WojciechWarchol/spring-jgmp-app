@@ -1,11 +1,14 @@
 package com.wojto.facade;
 
+import com.wojto.EventApp;
 import com.wojto.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,14 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookingFacadeTest {
 
+    @Autowired
     private BookingFacadeImpl bookingFacade;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     @BeforeEach
     void setUp() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("file:src/main/java/ApplicationContext.xml");
-        bookingFacade = (BookingFacadeImpl) context.getBean("bookingFacade");
+        ApplicationContext context = new AnnotationConfigApplicationContext(EventApp.class);
+        bookingFacade = context.getBean(BookingFacadeImpl.class);
     }
 
     @Test

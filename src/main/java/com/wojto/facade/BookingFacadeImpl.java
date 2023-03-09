@@ -8,16 +8,23 @@ import com.wojto.service.TicketService;
 import com.wojto.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
+@Component
 public class BookingFacadeImpl implements BookingFacade{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BookingFacadeImpl.class);
 
+    @Autowired
     EventService eventService;
+    @Autowired
     UserService userService;
+    @Autowired
     TicketService ticketService;
 
     public BookingFacadeImpl(EventService eventService, UserService userService, TicketService ticketService) {

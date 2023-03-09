@@ -4,25 +4,33 @@ import com.wojto.facade.BookingFacadeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+@Configuration
+@ComponentScan(basePackages = "com.wojto")
+@PropertySource("classpath:application.properties")
 public class EventApp {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventApp.class);
 
     private static ApplicationContext context;
 
+    BookingFacadeImpl bookingFacade;
+
     public static void main(String[] args) throws ParseException {
 
         LOGGER.info("Initializing Application context from XML configuration");
-        context = new ClassPathXmlApplicationContext("file:src/main/java/ApplicationContext.xml");
+        context = new AnnotationConfigApplicationContext(EventApp.class);
         LOGGER.info("Initialized");
 
         LOGGER.info("Creating BookingFacade and performing autowiring");
-        BookingFacadeImpl bookingFacade = (BookingFacadeImpl) context.getBean("bookingFacade");
+        BookingFacadeImpl bookingFacade = context.getBean(BookingFacadeImpl.class);
         LOGGER.info("Initialized BookingFacade with dependencies");
         System.out.println(bookingFacade.getEventById(1).getTitle());
         System.out.println(bookingFacade.getUserById(1).getName());
