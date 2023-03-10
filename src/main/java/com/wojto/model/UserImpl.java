@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 public class UserImpl implements User{
 
     @Id @GeneratedValue

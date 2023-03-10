@@ -3,7 +3,7 @@ package com.wojto.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="ticket")
+@Table(name="tickets")
 public class TicketImpl implements Ticket{
 
     @Id @GeneratedValue

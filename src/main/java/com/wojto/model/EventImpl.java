@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "event")
+@Table(name = "events")
 public class EventImpl implements Event{
 
     @Id @GeneratedValue
