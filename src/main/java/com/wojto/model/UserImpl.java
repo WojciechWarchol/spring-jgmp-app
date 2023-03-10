@@ -1,11 +1,18 @@
 package com.wojto.model;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name="user")
 public class UserImpl implements User{
 
+    @Id @GeneratedValue
     private long id;
+    @Column
     private String name;
+    @Column
     private String email;
 
     public UserImpl() {

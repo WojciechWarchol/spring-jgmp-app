@@ -19,6 +19,11 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.25" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.25" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:2.7.7" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-jpa:2.7.7" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-orm:5.3.25" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:5.3.25" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.25" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.persistence:jakarta.persistence-api:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.batch:spring-batch-core:4.3.7" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.11.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.11.4" level="project" />
@@ -29,7 +34,6 @@
     <orderEntry type="library" name="Maven: javax.batch:javax.batch-api:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.batch:spring-batch-infrastructure:4.3.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.retry:spring-retry:1.3.3" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.23" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:2.0.6" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:2.0.6" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-test:5.3.25" level="project" />

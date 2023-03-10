@@ -1,11 +1,20 @@
 package com.wojto.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="ticket")
 public class TicketImpl implements Ticket{
 
+    @Id @GeneratedValue
     private long id;
+    @Column
     private long eventId;
+    @Column
     private long userId;
+    @Column
     private Category category;
+    @Column
     private int place;
 
     public TicketImpl() {

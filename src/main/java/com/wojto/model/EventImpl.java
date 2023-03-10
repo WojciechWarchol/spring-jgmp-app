@@ -1,12 +1,19 @@
 package com.wojto.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 import java.util.Objects;
 
+@Entity
+@Table(name = "event")
 public class EventImpl implements Event{
 
+    @Id @GeneratedValue
     private long id;
+    @Column
     private String title;
+    @Column
     private Date date;
 
     public EventImpl() {
