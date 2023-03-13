@@ -1,7 +1,6 @@
 package com.wojto.dao;
 
 import com.wojto.model.Event;
-import com.wojto.model.EventImpl;
 import com.wojto.storage.EventInMemoryStorage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,11 +37,11 @@ class InMemoryEventDaoTest {
 
     {
         try {
-            testEvent = new EventImpl(4, "Test Event", dateFormat.parse("01-03-2023"));
+            testEvent = new Event(4, "Test Event", dateFormat.parse("01-03-2023"));
             eventList = new ArrayList<>();
-            eventList.add(new EventImpl(1, "Music Event", dateFormat.parse("01-03-2023")));
-            eventList.add(new EventImpl(2, "IT Event", dateFormat.parse("13-04-2023")));
-            eventList.add(new EventImpl(3, "Culinary Event", dateFormat.parse("13-04-2023")));
+            eventList.add(new Event(1, "Music Event", dateFormat.parse("01-03-2023")));
+            eventList.add(new Event(2, "IT Event", dateFormat.parse("13-04-2023")));
+            eventList.add(new Event(3, "Culinary Event", dateFormat.parse("13-04-2023")));
         } catch (ParseException e) {
             System.out.println("Error in parsing dates for test events.");
         }

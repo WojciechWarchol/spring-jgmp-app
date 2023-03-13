@@ -56,7 +56,7 @@ class BookingFacadeTest {
 
     @Test
     void getEventsByTitlePaginationTest() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"));
         List<Event> eventList = bookingFacade.getEventsByTitle("Event", 1, 0);
         assertEquals(1, eventList.size());
         assertEquals(event, eventList.get(0));
@@ -76,7 +76,7 @@ class BookingFacadeTest {
 
     @Test
     void createEvent() throws ParseException {
-        Event newEvent = new EventImpl(4, "New Event", dateFormat.parse("15-05-2023"));
+        Event newEvent = new Event(4, "New Event", dateFormat.parse("15-05-2023"));
         bookingFacade.createEvent(newEvent);
         Event polledNewEvent = bookingFacade.getEventById(4);
         assertEquals(newEvent, polledNewEvent);
@@ -84,7 +84,7 @@ class BookingFacadeTest {
 
     @Test
     void updateEvent() throws ParseException {
-        Event updatedEvent = new EventImpl(1, "Updated Event", dateFormat.parse("06-06-2023"));
+        Event updatedEvent = new Event(1, "Updated Event", dateFormat.parse("06-06-2023"));
         bookingFacade.updateEvent(updatedEvent);
         Event polledUpdatedEvent = bookingFacade.getEventById(1);
         assertEquals(updatedEvent, polledUpdatedEvent);
@@ -195,14 +195,14 @@ class BookingFacadeTest {
 
     @Test
     void getBookedTicketsForEvent() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"));
         List<Ticket> tickets = bookingFacade.getBookedTickets(event, 10, 0);
         assertEquals(4, tickets.size());
     }
 
     @Test
     void getBookedTicketsForEventAndCheckPagination() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"));
         List<Ticket> tickets = bookingFacade.getBookedTickets(event, 2, 1);
         assertEquals(2, tickets.size());
         assertTrue(tickets.stream().anyMatch(t -> t.getId() == 7L));
@@ -220,7 +220,7 @@ class BookingFacadeTest {
 
     @Test
     void bookTicketForNewlyCreatedEventAndUser() throws ParseException {
-        Event event = new EventImpl(4, "New Event", dateFormat.parse("07-07-2023"));
+        Event event = new Event(4, "New Event", dateFormat.parse("07-07-2023"));
         bookingFacade.createEvent(event);
 
         User user = new UserImpl(7, "Newes Userus", "n.u@gmail.com");

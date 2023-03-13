@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
-@Repository
+@Repository("InMemoryEventDao")
 public class InMemoryEventDao implements EventDao, InMemoryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryEventDao.class);
