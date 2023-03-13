@@ -130,7 +130,7 @@ class BookingFacadeTest {
 
     @Test
     void createUser() {
-        User newUser = new UserImpl(7 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
+        User newUser = new User(7 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
         bookingFacade.createUser(newUser);
         User polledNewUser = bookingFacade.getUserByEmail("zbychu@gmail.com");
         assertEquals(newUser, polledNewUser);
@@ -138,7 +138,7 @@ class BookingFacadeTest {
 
     @Test
     void updateUser() {
-        User updatedUser = new UserImpl(1 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
+        User updatedUser = new User(1 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
         bookingFacade.updateUser(updatedUser);
         User polledNewUser = bookingFacade.getUserById(1);
         assertEquals(updatedUser, polledNewUser);
@@ -171,7 +171,7 @@ class BookingFacadeTest {
         assertEquals(category, ticket.getCategory());
 
         List<Ticket> ticketsForUser = bookingFacade.getBookedTickets(
-                new UserImpl(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com"),10,0);
+                new User(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com"),10,0);
         assertTrue(ticketsForUser.contains(ticket));
     }
 
@@ -188,7 +188,7 @@ class BookingFacadeTest {
 
     @Test
     void getBookedTicketsForUser() {
-        User user = new UserImpl(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com");
+        User user = new User(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com");
         List<Ticket> tickets = bookingFacade.getBookedTickets(user, 3, 0);
         assertEquals(2, tickets.size());
     }
@@ -211,7 +211,7 @@ class BookingFacadeTest {
 
     @Test
     void cancelTicket() {
-        User user = new UserImpl(4l, "Jan Nowak", "j.nowak@gmail.com");
+        User user = new User(4l, "Jan Nowak", "j.nowak@gmail.com");
         boolean ticketDeleted = bookingFacade.cancelTicket(7);
         assertTrue(ticketDeleted);
         List<Ticket> tickets = bookingFacade.getBookedTickets(user, 1, 0);
@@ -223,7 +223,7 @@ class BookingFacadeTest {
         Event event = new Event(4, "New Event", dateFormat.parse("07-07-2023"));
         bookingFacade.createEvent(event);
 
-        User user = new UserImpl(7, "Newes Userus", "n.u@gmail.com");
+        User user = new User(7, "Newes Userus", "n.u@gmail.com");
         bookingFacade.createUser(user);
 
         Ticket ticket = bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);

@@ -2,7 +2,6 @@ package com.wojto.dao;
 
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
-import com.wojto.model.TicketImpl;
 import com.wojto.model.User;
 import com.wojto.storage.TicketInMemoryStorage;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,11 +41,11 @@ class InMemoryTicketDaoTest {
 
     @BeforeEach
     void setUp() {
-        testTicket = new TicketImpl(1, 1, 1, Ticket.Category.STANDARD, 1);
+        testTicket = new Ticket(1, 1, 1, Ticket.Category.STANDARD, 1);
         ticketTestList = new ArrayList<>();
-        ticketTestList.add(new TicketImpl(2, 1, 2, Ticket.Category.STANDARD, 2));
-        ticketTestList.add(new TicketImpl(3, 2, 1, Ticket.Category.PREMIUM, 1));
-        ticketTestList.add(new TicketImpl(4, 2, 2, Ticket.Category.BAR, 2));
+        ticketTestList.add(new Ticket(2, 1, 2, Ticket.Category.STANDARD, 2));
+        ticketTestList.add(new Ticket(3, 2, 1, Ticket.Category.PREMIUM, 1));
+        ticketTestList.add(new Ticket(4, 2, 2, Ticket.Category.BAR, 2));
     }
 
     @Test

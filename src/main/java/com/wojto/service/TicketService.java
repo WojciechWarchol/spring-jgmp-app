@@ -3,11 +3,11 @@ package com.wojto.service;
 import com.wojto.dao.TicketDao;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
-import com.wojto.model.TicketImpl;
 import com.wojto.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ public class TicketService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketService.class);
 
     @Autowired
+    @Qualifier("DBTicketRepository")
     TicketDao ticketDao;
 
     public List<Ticket> findAllTickets(int pageSize, int pageNum) {
@@ -54,7 +55,7 @@ public class TicketService {
             LOGGER.error(String.format("The place: %d, on event: %d is already booked!", place, eventId));
             throw new IllegalStateException();
         } else {
-            newTicket = new TicketImpl(0, eventId, userId, category, place);
+            newTicket = new Ticket(0, eventId, userId, category, place);
             LOGGER.info("Place is free, booked ticket: " + newTicket);
             ticketDao.bookTicket(newTicket);
         }

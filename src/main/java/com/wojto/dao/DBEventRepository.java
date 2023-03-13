@@ -47,7 +47,7 @@ public interface DBEventRepository extends JpaRepository<Event, Long>, EventDao 
 
     @Override
     default boolean deleteEvent(long eventId) {
-        if(existsById(eventId)) {
+        if (existsById(eventId)) {
             deleteById(eventId);
             return true;
         }
@@ -57,7 +57,6 @@ public interface DBEventRepository extends JpaRepository<Event, Long>, EventDao 
     /**
      * Methods from JpaRepository interface
      */
-
 
     List<Event> findAll();
 
@@ -69,5 +68,7 @@ public interface DBEventRepository extends JpaRepository<Event, Long>, EventDao 
 
     Page<Event> findByDate(Date date, Pageable pageable);
 
-    <S extends Event> S save(S entity);
+    Event save(Event event);
+
+    void deleteById(long id);
 }

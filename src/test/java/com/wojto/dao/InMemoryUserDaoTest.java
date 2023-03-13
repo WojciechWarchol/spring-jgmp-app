@@ -1,7 +1,6 @@
 package com.wojto.dao;
 
 import com.wojto.model.User;
-import com.wojto.model.UserImpl;
 import com.wojto.storage.UserInMemoryStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,11 +36,11 @@ class InMemoryUserDaoTest {
 
     @BeforeEach
     void setUp() {
-        testUser = new UserImpl(4, "Test User", "test.user@gmail.com");
+        testUser = new User(4, "Test User", "test.user@gmail.com");
         userTestList = new ArrayList<>();
-        userTestList.add(new UserImpl(1, "Jozef Malolepszy", "jozef.malolepszy@gmail.com"));
-        userTestList.add(new UserImpl(2, "Jan Nowak", "j.nowak@gmail.com"));
-        userTestList.add(new UserImpl(3, "Adam Mickiewicz", "a.mickiewicz@gmail.com"));
+        userTestList.add(new User(1, "Jozef Malolepszy", "jozef.malolepszy@gmail.com"));
+        userTestList.add(new User(2, "Jan Nowak", "j.nowak@gmail.com"));
+        userTestList.add(new User(3, "Adam Mickiewicz", "a.mickiewicz@gmail.com"));
     }
 
     @Test

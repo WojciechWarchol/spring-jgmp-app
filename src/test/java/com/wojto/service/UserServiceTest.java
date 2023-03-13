@@ -1,6 +1,6 @@
 package com.wojto.service;
 
-import com.wojto.dao.InMemoryUserDao;
+import com.wojto.dao.DBUserRepository;
 import com.wojto.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Mock
-    private InMemoryUserDao inMemoryUserDaoMock;
+    private DBUserRepository dbUserRepository;
     @Mock
     private List<User> userListMock;
     @Mock
@@ -33,7 +33,7 @@ class UserServiceTest {
 
     @Test
     void getAllUser() {
-        when(inMemoryUserDaoMock.getAllUser(any())).thenReturn(userPageMock);
+        when(dbUserRepository.getAllUser(any())).thenReturn(userPageMock);
         when(userPageMock.getContent()).thenReturn(userListMock);
         List<User> userList = userService.getAllUser(2, 4);
         assertNotNull(userList);
@@ -41,21 +41,21 @@ class UserServiceTest {
 
     @Test
     void getUserById() {
-        when(inMemoryUserDaoMock.getUserById(anyLong())).thenReturn(userMock);
+        when(dbUserRepository.getUserById(anyLong())).thenReturn(userMock);
         User user = userService.getUserById(1);
         assertNotNull(user);
     }
 
     @Test
     void getUserByEmail() {
-        when(inMemoryUserDaoMock.getUserByEmail(anyString())).thenReturn(userMock);
+        when(dbUserRepository.getUserByEmail(anyString())).thenReturn(userMock);
         User user = userService.getUserByEmail("lol@gmail.com");
         assertNotNull(user);
     }
 
     @Test
     void getUsersByName() {
-        when(inMemoryUserDaoMock.getUsersByName(anyString(), any())).thenReturn(userPageMock);
+        when(dbUserRepository.getUsersByName(anyString(), any())).thenReturn(userPageMock);
         when(userPageMock.getContent()).thenReturn(userListMock);
         List<User> userList = userService.getUsersByName("Andrzej", 3, 3);
         assertNotNull(userList);
@@ -63,21 +63,21 @@ class UserServiceTest {
 
     @Test
     void createUser() {
-        when(inMemoryUserDaoMock.createUser(userMock)).thenReturn(userMock);
+        when(dbUserRepository.createUser(userMock)).thenReturn(userMock);
         User user = userService.createUser(userMock);
         assertEquals(userMock, user);
     }
 
     @Test
     void updateUser() {
-        when(inMemoryUserDaoMock.updateUser(userMock)).thenReturn(userMock);
+        when(dbUserRepository.updateUser(userMock)).thenReturn(userMock);
         User user = userService.updateUser(userMock);
         assertEquals(userMock, user);
     }
 
     @Test
     void deleteUser() {
-        when(inMemoryUserDaoMock.deleteUser(anyLong())).thenReturn(true);
+        when(dbUserRepository.deleteUser(anyLong())).thenReturn(true);
         boolean userDeleted = userService.deleteUser(5);
         assertTrue(userDeleted);
     }

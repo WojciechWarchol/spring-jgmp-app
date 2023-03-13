@@ -1,7 +1,6 @@
 package com.wojto.storage.mappers;
 
 import com.wojto.model.Ticket;
-import com.wojto.model.TicketImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -14,7 +13,7 @@ public class TicketMapper implements FieldSetMapper<Ticket> {
 
     @Override
     public Ticket mapFieldSet(FieldSet fieldSet) throws BindException {
-        Ticket ticket = new TicketImpl();
+        Ticket ticket = new Ticket();
         ticket.setId(fieldSet.readLong("id"));
         ticket.setEventId(fieldSet.readLong("eventId"));
         ticket.setUserId(fieldSet.readLong("userId"));

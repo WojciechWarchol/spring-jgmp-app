@@ -24,15 +24,15 @@ class TicketInMemoryStorageTest {
 
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        ticket1 = new TicketImpl(1, 1, 1, Ticket.Category.STANDARD, 1);
-        ticket2 = new TicketImpl(2, 1, 2, Ticket.Category.PREMIUM, 2);
-        ticket3 = new TicketImpl(3, 2, 1, Ticket.Category.BAR, 1);
+        ticket1 = new Ticket(1, 1, 1, Ticket.Category.STANDARD, 1);
+        ticket2 = new Ticket(2, 1, 2, Ticket.Category.PREMIUM, 2);
+        ticket3 = new Ticket(3, 2, 1, Ticket.Category.BAR, 1);
         try {
             event = new Event(1, "Music Event", dateFormat.parse("01-01-2023"));
         } catch (ParseException e) {
             System.out.println("Error in parsing dates for test events.");
         }
-        user = new UserImpl(1, "Jan Kowalski", "j.k@gmail.com");
+        user = new User(1, "Jan Kowalski", "j.k@gmail.com");
     }
 
     @BeforeEach
@@ -73,7 +73,7 @@ class TicketInMemoryStorageTest {
 
     @Test
     void addTicket() {
-        Ticket newTicket = ticketInMemoryStorage.addTicket(new TicketImpl(4, 2, 2, Ticket.Category.STANDARD, 3));
+        Ticket newTicket = ticketInMemoryStorage.addTicket(new Ticket(4, 2, 2, Ticket.Category.STANDARD, 3));
         assertEquals(4, ticketInMemoryStorage.getAllTickets().size());
         assertEquals(newTicket, ticketInMemoryStorage.getTicketById(4));
     }
