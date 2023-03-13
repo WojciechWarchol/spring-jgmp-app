@@ -1,9 +1,6 @@
 package com.wojto;
 
 import com.wojto.facade.BookingFacadeImpl;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,7 @@ import java.text.SimpleDateFormat;
 @PropertySource("classpath:application.properties")
 @EnableJpaRepositories("com.wojto.dao")
 @EntityScan("com.wojto.model")
-//@EnableTransactionManagement
+@EnableTransactionManagement
 @EnableAutoConfiguration
 public class EventApp {
 
