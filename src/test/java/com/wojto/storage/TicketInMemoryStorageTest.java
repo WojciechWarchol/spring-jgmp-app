@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -28,7 +29,7 @@ class TicketInMemoryStorageTest {
         ticket2 = new Ticket(2, 1, 2, Ticket.Category.PREMIUM, 2);
         ticket3 = new Ticket(3, 2, 1, Ticket.Category.BAR, 1);
         try {
-            event = new Event(1, "Music Event", dateFormat.parse("01-01-2023"));
+            event = new Event(1, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00));
         } catch (ParseException e) {
             System.out.println("Error in parsing dates for test events.");
         }

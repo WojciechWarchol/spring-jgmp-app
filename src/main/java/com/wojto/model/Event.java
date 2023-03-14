@@ -1,8 +1,8 @@
 package com.wojto.model;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Table(name = "events")
@@ -15,14 +15,17 @@ public class Event{
     private String title;
     @Column
     private Date date;
+    @Column
+    private BigDecimal ticketPrice;
 
     public Event() {
     }
 
-    public Event(long id, String title, Date date) {
+    public Event(long id, String title, Date date, BigDecimal ticketPrice) {
         this.id = id;
         this.title = title;
         this.date = date;
+        this.ticketPrice = ticketPrice;
     }
 
     public long getId() {
@@ -49,6 +52,14 @@ public class Event{
         this.date = date;
     }
 
+    public BigDecimal getTicketPrice() {
+        return ticketPrice;
+    }
+
+    public void setTicketPrice(BigDecimal ticketPrice) {
+        this.ticketPrice = ticketPrice;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,15 +68,17 @@ public class Event{
         Event event = (Event) o;
 
         if (id != event.id) return false;
-        if (!Objects.equals(title, event.title)) return false;
-        return Objects.equals(date, event.date);
+        if (!title.equals(event.title)) return false;
+        if (!date.equals(event.date)) return false;
+        return ticketPrice.equals(event.ticketPrice);
     }
 
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + title.hashCode();
+        result = 31 * result + date.hashCode();
+        result = 31 * result + ticketPrice.hashCode();
         return result;
     }
 
@@ -75,6 +88,7 @@ public class Event{
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", date=" + date +
+                ", ticketPrice=" + ticketPrice +
                 '}';
     }
 }

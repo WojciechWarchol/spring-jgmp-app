@@ -1,7 +1,7 @@
-INSERT INTO events (id, title, date) VALUES
-    (1,'Music Event','2023-01-01'),
-    (2,'IT Event','2023-04-13'),
-    (3,'Culinary Event','2023-04-13');
+INSERT INTO events (id, title, date, ticketPrice) VALUES
+    (1,'Music Event','2023-01-01', 50.00),
+    (2,'IT Event','2023-04-13', 40.00),
+    (3,'Culinary Event','2023-04-13', 30.00);
 
 INSERT INTO users (id, name, email) VALUES
     (1,'Jozef Malolepszy','jozef.malolepszy@gmail.com'),
@@ -21,4 +21,12 @@ INSERT INTO tickets (id, eventId, userId, category, place) VALUES
     (7,1,4,'STANDARD',4),
     (8,2,5,'STANDARD',2),
     (9,3,6,'PREMIUM',3);
+
+INSERT INTO user_accounts (id, userId, funds) VALUES
+    (1, 1, 100.00),
+    (2, 2, 200.00),
+    (3, 3, 50.00),
+    (4, 4, 130.30),
+    (5, 5, 100.10),
+    (6, 6, 90.00)
 

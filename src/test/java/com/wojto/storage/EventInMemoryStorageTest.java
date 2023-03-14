@@ -4,6 +4,7 @@ import com.wojto.model.Event;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -20,9 +21,9 @@ class EventInMemoryStorageTest {
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         try {
-            event1 = new Event(1, "Music Event", dateFormat.parse("01-03-2023"));
-            event2 = new Event(2, "IT Event", dateFormat.parse("13-04-2023"));
-            event3 = new Event(3, "Culinary Event", dateFormat.parse("13-04-2023"));
+            event1 = new Event(1, "Music Event", dateFormat.parse("01-03-2023"), BigDecimal.valueOf(50.00));
+            event2 = new Event(2, "IT Event", dateFormat.parse("13-04-2023"), BigDecimal.valueOf(40.00));
+            event3 = new Event(3, "Culinary Event", dateFormat.parse("13-04-2023"), BigDecimal.valueOf(30.00));
         } catch (ParseException e) {
             System.out.println("Error in parsing dates for test events.");
         }
@@ -72,7 +73,7 @@ class EventInMemoryStorageTest {
     @Test
     void addOrUpdateEvent() throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Event newEvent = new Event(4, "New Event", dateFormat.parse("06-06-2023"));
+        Event newEvent = new Event(4, "New Event", dateFormat.parse("06-06-2023"), BigDecimal.valueOf(10.00));
         eventInMemoryStorage.addOrUpdateEvent(newEvent);
         assertEquals(4, eventInMemoryStorage.getAllEvents().size());
         assertEquals(newEvent, eventInMemoryStorage.getEventById(4));

@@ -3,8 +3,10 @@ package com.wojto.facade;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
+import com.wojto.model.UserAccount;
 import com.wojto.service.EventService;
 import com.wojto.service.TicketService;
+import com.wojto.service.UserAccountService;
 import com.wojto.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +30,8 @@ public class BookingFacadeImpl implements BookingFacade{
     UserService userService;
     @Autowired
     TicketService ticketService;
+    @Autowired
+    UserAccountService userAccountService;
 
     public BookingFacadeImpl(EventService eventService, UserService userService, TicketService ticketService) {
         this.eventService = eventService;
@@ -106,11 +112,24 @@ public class BookingFacadeImpl implements BookingFacade{
     }
 
     @Override
+    @Transactional
     public Ticket bookTicket(long userId, long eventId, int place, Ticket.Category category) {
         LOGGER.info(
-                String.format("Calling TicketService to book ticket with userId: %d, eventId: %d, place: %d, category: %s",
+                String.format("Calling Event Service, UserAccount Service and TicketService to book ticket with userId: %d, eventId: %d, place: %d, category: %s",
                         userId, eventId, place, category));
-        return ticketService.bookTicket(userId, eventId, place, category);
+        LOGGER.info("Checking ticket price for event: " + eventId);
+        Event event = eventService.findEventById(eventId);
+        BigDecimal ticketPrice = event.getTicketPrice();
+        LOGGER.info("Attempting to deduct payment for ticket: " + ticketPrice + " from user: " + userId);
+        boolean fundDeductionSuccessful = userAccountService.deductFundsFromAccount(userId, ticketPrice);
+        if (fundDeductionSuccessful) {
+            LOGGER.info("Proceeding to book ticket after successfully deducting payment");
+            Ticket bookedTicket = ticketService.bookTicket(userId, eventId, place, category);
+            return bookedTicket;
+        } else {
+            LOGGER.error("Payment deduction failed. Performing rollback");
+            throw new IllegalStateException("Payment deduction failed!");
+        }
     }
 
     @Override
@@ -126,8 +145,36 @@ public class BookingFacadeImpl implements BookingFacade{
     }
 
     @Override
+    @Transactional
     public boolean cancelTicket(long ticketId) {
+        LOGGER.info("Calling TicketService to for ticket to cancel");
+        Ticket ticket = ticketService.findTicketById(ticketId);
         LOGGER.info("Calling TicketService to cancel ticket with id: " + ticketId);
-        return ticketService.cancelTicket(ticketId);
+        ticketService.cancelTicket(ticketId);
+        LOGGER.info("Calling EventService to check for amount to be refunded to user.");
+        Event event = eventService.findEventById(ticket.getEventId());
+        BigDecimal refundAmount = event.getTicketPrice();
+        LOGGER.info("Calling UserAccount Service to refund ticket cost tu user.");
+        userAccountService.topUpUserAccount(ticket.getUserId(), refundAmount);
+        LOGGER.info("Ticket refund finished.");
+        return true;
+    }
+
+    @Override
+    public UserAccount getUserAccountById(long accountId) {
+        LOGGER.info("Calling UserAccountService for user account with id: " + accountId);
+        return userAccountService.getUserAccountById(accountId);
+    }
+
+    @Override
+    public UserAccount getUserAccountByUserId(long userId) {
+        LOGGER.info("Calling UserAccountService for user account for user id: " + userId);
+        return userAccountService.getUserAccountByUserId(userId);
+    }
+
+    @Override
+    public UserAccount topUpUserAccount(long userId, BigDecimal amount) {
+        LOGGER.info("Calling UserAccountService to top up account of user: " + userId + " in the ammount of: " + amount);
+        return userAccountService.topUpUserAccount(userId, amount);
     }
 }
