@@ -1,20 +1,26 @@
 package com.wojto.service;
 
+import com.wojto.dao.DBEventRepository;
 import com.wojto.dao.EventDao;
 import com.wojto.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
-
+@Service
 public class EventService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventService.class);
 
+    @Autowired
+    @Qualifier("DBEventRepository")
     EventDao eventDao;
 
     public List<Event> findAllEvents(int pageSize, int pageNum) {
@@ -59,7 +65,7 @@ public class EventService {
         return eventDao;
     }
 
-    public void setEventDao(EventDao eventDao) {
+    public void setEventDao(DBEventRepository eventDao) {
         this.eventDao = eventDao;
     }
 }

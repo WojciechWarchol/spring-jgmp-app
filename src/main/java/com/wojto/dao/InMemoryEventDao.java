@@ -6,20 +6,26 @@ import com.wojto.storage.mappers.EventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
 
+@Repository("InMemoryEventDao")
 public class InMemoryEventDao implements EventDao, InMemoryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryEventDao.class);
 
+    @Autowired
     EventInMemoryStorage eventInMemoryStorage;
 
-    private static String fileName;
+    @Value("${dao.inmemory.event.contentfile}")
+    private String fileName;
     private static final String[] PARAM_NAMES = new String[] { "id", "title", "date" };
     private static final Class<Event> SUPPORTED_CLASS_TYPE = Event.class;
 
@@ -28,8 +34,8 @@ public class InMemoryEventDao implements EventDao, InMemoryDao {
         return fileName;
     }
 
-    public static void setFileName(String fileName) {
-        InMemoryEventDao.fileName = fileName;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override

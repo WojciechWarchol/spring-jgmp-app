@@ -4,6 +4,7 @@ import com.wojto.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Component
 public class UserInMemoryStorage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserInMemoryStorage.class);

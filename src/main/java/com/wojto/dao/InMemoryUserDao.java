@@ -6,19 +6,25 @@ import com.wojto.storage.mappers.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class InMemoryUserDao implements UserDao, InMemoryDao{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryUserDao.class);
 
+    @Autowired
     UserInMemoryStorage userInMemoryStorage;
 
-    private static String fileName;
+    @Value("${dao.inmemory.user.contentfile}")
+    private String fileName;
     private static final String[] PARAM_NAMES = new String[] { "id", "name", "email" };
     private static final Class<User> SUPPORTED_CLASS_TYPE = User.class;
 
@@ -27,8 +33,8 @@ public class InMemoryUserDao implements UserDao, InMemoryDao{
         return fileName;
     }
 
-    public static void setFileName(String fileName) {
-        InMemoryUserDao.fileName = fileName;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override

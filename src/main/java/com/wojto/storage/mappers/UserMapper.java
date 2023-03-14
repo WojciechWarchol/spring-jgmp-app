@@ -1,7 +1,6 @@
 package com.wojto.storage.mappers;
 
 import com.wojto.model.User;
-import com.wojto.model.UserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -14,7 +13,7 @@ public class UserMapper implements FieldSetMapper<User> {
 
     @Override
     public User mapFieldSet(FieldSet fieldSet) throws BindException {
-        User user = new UserImpl();
+        User user = new User();
         user.setId(fieldSet.readLong("id"));
         user.setName(fieldSet.readString("name"));
         user.setEmail(fieldSet.readString("email"));

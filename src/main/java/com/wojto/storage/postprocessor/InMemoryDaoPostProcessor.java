@@ -16,7 +16,9 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InMemoryDaoPostProcessor implements BeanPostProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryDaoPostProcessor.class);

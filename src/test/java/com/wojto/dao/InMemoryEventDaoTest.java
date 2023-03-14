@@ -1,7 +1,6 @@
 package com.wojto.dao;
 
 import com.wojto.model.Event;
-import com.wojto.model.EventImpl;
 import com.wojto.storage.EventInMemoryStorage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,11 +38,11 @@ class InMemoryEventDaoTest {
 
     {
         try {
-            testEvent = new EventImpl(4, "Test Event", dateFormat.parse("01-03-2023"));
+            testEvent = new Event(4, "Test Event", dateFormat.parse("01-03-2023"), BigDecimal.valueOf(10.00));
             eventList = new ArrayList<>();
-            eventList.add(new EventImpl(1, "Music Event", dateFormat.parse("01-03-2023")));
-            eventList.add(new EventImpl(2, "IT Event", dateFormat.parse("13-04-2023")));
-            eventList.add(new EventImpl(3, "Culinary Event", dateFormat.parse("13-04-2023")));
+            eventList.add(new Event(1, "Music Event", dateFormat.parse("01-03-2023"), BigDecimal.valueOf(50.00)));
+            eventList.add(new Event(2, "IT Event", dateFormat.parse("13-04-2023"), BigDecimal.valueOf(40.00)));
+            eventList.add(new Event(3, "Culinary Event", dateFormat.parse("13-04-2023"), BigDecimal.valueOf(30.00)));
         } catch (ParseException e) {
             System.out.println("Error in parsing dates for test events.");
         }

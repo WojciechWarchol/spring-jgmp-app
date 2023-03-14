@@ -1,8 +1,6 @@
 package com.wojto.storage;
 
-import com.wojto.model.Event;
 import com.wojto.model.User;
-import com.wojto.model.UserImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +19,9 @@ class UserInMemoryStorageTest {
     private Pageable pageable = PageRequest.of(0, 10);
 
     {
-        user1 = new UserImpl(1, "Jozef Malolepszy", "jozef.malolepszy@gmail.com");
-        user2 = new UserImpl(2, "Jan Nowak", "j.nowak@gmail.com");
-        user3 = new UserImpl(3, "Adam Mickiewicz", "a.mickiewicz@gmail.com");
+        user1 = new User(1, "Jozef Malolepszy", "jozef.malolepszy@gmail.com");
+        user2 = new User(2, "Jan Nowak", "j.nowak@gmail.com");
+        user3 = new User(3, "Adam Mickiewicz", "a.mickiewicz@gmail.com");
     }
 
     @BeforeEach
@@ -60,7 +58,7 @@ class UserInMemoryStorageTest {
 
     @Test
     void createOrUpdateUser() {
-        User newUser = userInMemoryStorage.createOrUpdateUser(new UserImpl(4, "New User", "n.n@gmail.com"));
+        User newUser = userInMemoryStorage.createOrUpdateUser(new User(4, "New User", "n.n@gmail.com"));
         assertEquals(4, userInMemoryStorage.getAllUsers().size());
         assertEquals(newUser, userInMemoryStorage.getUserById(4));
     }

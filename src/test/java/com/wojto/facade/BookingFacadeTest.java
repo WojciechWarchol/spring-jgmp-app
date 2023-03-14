@@ -1,12 +1,15 @@
 package com.wojto.facade;
 
+import com.wojto.EventApp;
 import com.wojto.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -16,14 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookingFacadeTest {
 
+    @Autowired
     private BookingFacadeImpl bookingFacade;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     @BeforeEach
     void setUp() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("file:src/main/java/ApplicationContext.xml");
-        bookingFacade = (BookingFacadeImpl) context.getBean("bookingFacade");
+        ApplicationContext context = new AnnotationConfigApplicationContext(EventApp.class);
+        bookingFacade = context.getBean(BookingFacadeImpl.class);
     }
 
     @Test
@@ -53,7 +57,7 @@ class BookingFacadeTest {
 
     @Test
     void getEventsByTitlePaginationTest() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(40.00));
         List<Event> eventList = bookingFacade.getEventsByTitle("Event", 1, 0);
         assertEquals(1, eventList.size());
         assertEquals(event, eventList.get(0));
@@ -73,7 +77,7 @@ class BookingFacadeTest {
 
     @Test
     void createEvent() throws ParseException {
-        Event newEvent = new EventImpl(4, "New Event", dateFormat.parse("15-05-2023"));
+        Event newEvent = new Event(4, "New Event", dateFormat.parse("15-05-2023"), BigDecimal.valueOf(10.00));
         bookingFacade.createEvent(newEvent);
         Event polledNewEvent = bookingFacade.getEventById(4);
         assertEquals(newEvent, polledNewEvent);
@@ -81,7 +85,7 @@ class BookingFacadeTest {
 
     @Test
     void updateEvent() throws ParseException {
-        Event updatedEvent = new EventImpl(1, "Updated Event", dateFormat.parse("06-06-2023"));
+        Event updatedEvent = new Event(1, "Updated Event", dateFormat.parse("06-06-2023"), BigDecimal.valueOf(33.00));
         bookingFacade.updateEvent(updatedEvent);
         Event polledUpdatedEvent = bookingFacade.getEventById(1);
         assertEquals(updatedEvent, polledUpdatedEvent);
@@ -127,7 +131,7 @@ class BookingFacadeTest {
 
     @Test
     void createUser() {
-        User newUser = new UserImpl(7 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
+        User newUser = new User(7 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
         bookingFacade.createUser(newUser);
         User polledNewUser = bookingFacade.getUserByEmail("zbychu@gmail.com");
         assertEquals(newUser, polledNewUser);
@@ -135,7 +139,7 @@ class BookingFacadeTest {
 
     @Test
     void updateUser() {
-        User updatedUser = new UserImpl(1 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
+        User updatedUser = new User(1 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
         bookingFacade.updateUser(updatedUser);
         User polledNewUser = bookingFacade.getUserById(1);
         assertEquals(updatedUser, polledNewUser);
@@ -168,7 +172,7 @@ class BookingFacadeTest {
         assertEquals(category, ticket.getCategory());
 
         List<Ticket> ticketsForUser = bookingFacade.getBookedTickets(
-                new UserImpl(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com"),10,0);
+                new User(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com"),10,0);
         assertTrue(ticketsForUser.contains(ticket));
     }
 
@@ -185,21 +189,21 @@ class BookingFacadeTest {
 
     @Test
     void getBookedTicketsForUser() {
-        User user = new UserImpl(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com");
+        User user = new User(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com");
         List<Ticket> tickets = bookingFacade.getBookedTickets(user, 3, 0);
         assertEquals(2, tickets.size());
     }
 
     @Test
     void getBookedTicketsForEvent() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00));
         List<Ticket> tickets = bookingFacade.getBookedTickets(event, 10, 0);
         assertEquals(4, tickets.size());
     }
 
     @Test
     void getBookedTicketsForEventAndCheckPagination() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00));
         List<Ticket> tickets = bookingFacade.getBookedTickets(event, 2, 1);
         assertEquals(2, tickets.size());
         assertTrue(tickets.stream().anyMatch(t -> t.getId() == 7L));
@@ -208,7 +212,7 @@ class BookingFacadeTest {
 
     @Test
     void cancelTicket() {
-        User user = new UserImpl(4l, "Jan Nowak", "j.nowak@gmail.com");
+        User user = new User(4l, "Jan Nowak", "j.nowak@gmail.com");
         boolean ticketDeleted = bookingFacade.cancelTicket(7);
         assertTrue(ticketDeleted);
         List<Ticket> tickets = bookingFacade.getBookedTickets(user, 1, 0);
@@ -217,10 +221,10 @@ class BookingFacadeTest {
 
     @Test
     void bookTicketForNewlyCreatedEventAndUser() throws ParseException {
-        Event event = new EventImpl(4, "New Event", dateFormat.parse("07-07-2023"));
+        Event event = new Event(4, "New Event", dateFormat.parse("07-07-2023"), BigDecimal.valueOf(10.00));
         bookingFacade.createEvent(event);
 
-        User user = new UserImpl(7, "Newes Userus", "n.u@gmail.com");
+        User user = new User(7, "Newes Userus", "n.u@gmail.com");
         bookingFacade.createUser(user);
 
         Ticket ticket = bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);

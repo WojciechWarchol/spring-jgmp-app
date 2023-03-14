@@ -3,11 +3,13 @@ package com.wojto.storage;
 import com.wojto.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class EventInMemoryStorage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventInMemoryStorage.class);

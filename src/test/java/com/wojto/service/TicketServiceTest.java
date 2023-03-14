@@ -1,6 +1,6 @@
 package com.wojto.service;
 
-import com.wojto.dao.InMemoryTicketDao;
+import com.wojto.dao.DBTicketRepository;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
@@ -25,7 +25,7 @@ class TicketServiceTest {
     private TicketService ticketService;
 
     @Mock
-    private InMemoryTicketDao inMemoryTicketDaoMock;
+    private DBTicketRepository dbTicketRepository;
     @Mock
     private List<Ticket> ticketListMock;
     @Mock
@@ -40,7 +40,7 @@ class TicketServiceTest {
 
     @Test
     void findAllTickets() {
-        when(inMemoryTicketDaoMock.getAllTickets(any())).thenReturn(ticketPageMock);
+        when(dbTicketRepository.getAllTickets(any())).thenReturn(ticketPageMock);
         when(ticketPageMock.getContent()).thenReturn(ticketListMock);
         List<Ticket> ticketList = ticketService.findAllTickets(4,0);
         assertNotNull(ticketList);
@@ -48,14 +48,14 @@ class TicketServiceTest {
 
     @Test
     void findTicketById() {
-        when(inMemoryTicketDaoMock.getTicketById(anyLong())).thenReturn(ticketMock);
+        when(dbTicketRepository.getTicketById(anyLong())).thenReturn(ticketMock);
         Ticket ticket = ticketService.findTicketById(6);
         assertNotNull(ticket);
     }
 
     @Test
     void getBooketTicketsForUser() {
-        when(inMemoryTicketDaoMock.getBookedTickets(any(User.class),any())).thenReturn(ticketPageMock);
+        when(dbTicketRepository.getBookedTickets(any(User.class),any())).thenReturn(ticketPageMock);
         when(ticketPageMock.getContent()).thenReturn(ticketListMock);
         List<Ticket> ticketList = ticketService.getBooketTickets(userMock, 7, 1);
         assertNotNull(ticketList);
@@ -63,7 +63,7 @@ class TicketServiceTest {
 
     @Test
     void GetBooketTicketsForEvent() {
-        when(inMemoryTicketDaoMock.getBookedTickets(any(Event.class),any())).thenReturn(ticketPageMock);
+        when(dbTicketRepository.getBookedTickets(any(Event.class),any())).thenReturn(ticketPageMock);
         when(ticketPageMock.getContent()).thenReturn(ticketListMock);
         List<Ticket> ticketList = ticketService.getBooketTickets(eventMock, 2, 3);
         assertNotNull(ticketList);
@@ -71,14 +71,14 @@ class TicketServiceTest {
 
     @Test
     void bookTicket() {
-        when(inMemoryTicketDaoMock.bookTicket(any(Ticket.class))).thenReturn(ticketMock);
+        when(dbTicketRepository.bookTicket(any(Ticket.class))).thenReturn(ticketMock);
         Ticket ticket = ticketService.bookTicket(6, 6, 6, Ticket.Category.BAR);
         assertNotNull(ticket);
     }
 
     @Test
     void cancelTicket() {
-        when(inMemoryTicketDaoMock.deleteTicket(anyLong())).thenReturn(true);
+        when(dbTicketRepository.deleteTicket(anyLong())).thenReturn(true);
         boolean ticketDeleted = ticketService.cancelTicket(4);
         assertTrue(ticketDeleted);
     }
