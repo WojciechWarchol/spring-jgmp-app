@@ -96,7 +96,11 @@ public class BookingFacadeImpl implements BookingFacade{
     @Override
     public User createUser(User user) {
         LOGGER.info("Calling UserService to create user: " + user);
-        return userService.createUser(user);
+        user = userService.createUser(user);
+        LOGGER.info("Calling UserAccountService to create account for user.");
+        UserAccount userAccount = new UserAccount(user.getId(), user.getId());
+        userAccountService.createUserAccount(userAccount);
+        return user;
     }
 
     @Override

@@ -28,5 +28,5 @@ INSERT INTO user_accounts (id, userId, funds) VALUES
     (3, 3, 50.00),
     (4, 4, 130.30),
     (5, 5, 100.10),
-    (6, 6, 90.00)
+    (6, 6, 10.00)
 

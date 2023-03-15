@@ -38,6 +38,11 @@ public class UserAccountService {
         return userAccountRepository.findById(userId);
     }
 
+    public UserAccount createUserAccount(UserAccount userAccount) {
+        LOGGER.info("Calling DBUserAccountRepository to create UserAccount: " + userAccount);
+        return userAccountRepository.save(userAccount);
+    }
+
     public UserAccount topUpUserAccount(long userId, BigDecimal amount) {
         LOGGER.info("Topping up account for user: " + userId + " in the ammount of: " + amount );
         UserAccount userAccount = getUserAccountByUserId(userId);

@@ -21,7 +21,7 @@ public interface DBTicketRepository extends JpaRepository<Ticket, Long>, TicketD
 
     @Override
     default Ticket getTicketById(long ticketId) {
-        return getTicketById(ticketId);
+        return findById(ticketId);
     }
 
     @Override
