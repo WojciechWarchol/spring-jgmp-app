@@ -21,7 +21,7 @@ public class UserAccount {
     public UserAccount(long id, long userId) {
         this.id = id;
         this.userId = userId;
-        this.funds = BigDecimal.ZERO;
+        this.funds = BigDecimal.ZERO.setScale(2);
     }
 
     public long getId() {
@@ -41,7 +41,7 @@ public class UserAccount {
     }
 
     public BigDecimal getFunds() {
-        return funds;
+        return funds.setScale(2);
     }
 
     public void setFunds(BigDecimal funds) {

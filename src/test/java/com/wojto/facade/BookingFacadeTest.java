@@ -57,10 +57,15 @@ class BookingFacadeTest {
 
     @Test
     void getEventsByTitlePaginationTest() throws ParseException {
-        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(40.00));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00).setScale(2));
         List<Event> eventList = bookingFacade.getEventsByTitle("Event", 1, 0);
+        Event eventFromList = eventList.get(0);
+
         assertEquals(1, eventList.size());
-        assertEquals(event, eventList.get(0));
+        assertEquals(event.getId(), eventFromList.getId());
+        assertEquals(event.getTitle(), eventFromList.getTitle());
+        assertEquals(event.getDate(), eventFromList.getDate());
+        assertEquals(event.getTicketPrice(), eventFromList.getTicketPrice());
     }
 
     @Test
@@ -77,24 +82,33 @@ class BookingFacadeTest {
 
     @Test
     void createEvent() throws ParseException {
-        Event newEvent = new Event(4, "New Event", dateFormat.parse("15-05-2023"), BigDecimal.valueOf(10.00));
+        Event newEvent = new Event(4, "New Event", dateFormat.parse("15-05-2023"), BigDecimal.valueOf(10.00).setScale(2));
         bookingFacade.createEvent(newEvent);
         Event polledNewEvent = bookingFacade.getEventById(4);
-        assertEquals(newEvent, polledNewEvent);
+
+        assertEquals(newEvent.getId(), polledNewEvent.getId());
+        assertEquals(newEvent.getTitle(), polledNewEvent.getTitle());
+        assertEquals(newEvent.getDate(), polledNewEvent.getDate());
+        assertEquals(newEvent.getTicketPrice(), polledNewEvent.getTicketPrice());
     }
 
     @Test
     void updateEvent() throws ParseException {
-        Event updatedEvent = new Event(1, "Updated Event", dateFormat.parse("06-06-2023"), BigDecimal.valueOf(33.00));
+        Event updatedEvent = new Event(1, "Updated Event", dateFormat.parse("06-06-2023"), BigDecimal.valueOf(33.00).setScale(2));
         bookingFacade.updateEvent(updatedEvent);
         Event polledUpdatedEvent = bookingFacade.getEventById(1);
-        assertEquals(updatedEvent, polledUpdatedEvent);
+
+        assertEquals(updatedEvent.getId(), polledUpdatedEvent.getId());
+        assertEquals(updatedEvent.getTitle(), polledUpdatedEvent.getTitle());
+        assertEquals(updatedEvent.getDate(), polledUpdatedEvent.getDate());
+        assertEquals(updatedEvent.getTicketPrice(), polledUpdatedEvent.getTicketPrice());
     }
 
     @Test
     void deleteExistingEventAndReturnTrue() {
         boolean eventWasDeleted = bookingFacade.deleteEvent(1);
         Event event = bookingFacade.getEventById(1);
+
         assertTrue(eventWasDeleted);
         assertNull(event);
     }
@@ -134,6 +148,7 @@ class BookingFacadeTest {
         User newUser = new User(7 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
         bookingFacade.createUser(newUser);
         User polledNewUser = bookingFacade.getUserByEmail("zbychu@gmail.com");
+
         assertEquals(newUser, polledNewUser);
     }
 
@@ -142,6 +157,7 @@ class BookingFacadeTest {
         User updatedUser = new User(1 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
         bookingFacade.updateUser(updatedUser);
         User polledNewUser = bookingFacade.getUserById(1);
+
         assertEquals(updatedUser, polledNewUser);
     }
 
@@ -149,6 +165,7 @@ class BookingFacadeTest {
     void deleteUserAndReturnTrue() {
         boolean userDeleted = bookingFacade.deleteUser(2);
         User user = bookingFacade.getUserById(2);
+
         assertTrue(userDeleted);
         assertNull(user);
     }
@@ -185,6 +202,9 @@ class BookingFacadeTest {
         assertThrows(IllegalStateException.class, () -> {
             Ticket ticket = bookingFacade.bookTicket(userId, eventId, place, category);
         }, "Illegal State Exception was expected");
+
+//        BigDecimal userAccountBalanceBeforeTicketReservation = bookingFacade.userAccountService.getUserAccountByUserId(2).getFunds();
+//        assertEquals(BigDecimal.valueOf(200.00).setScale(2), userAccountBalanceBeforeTicketReservation);
     }
 
     @Test
@@ -205,6 +225,7 @@ class BookingFacadeTest {
     void getBookedTicketsForEventAndCheckPagination() throws ParseException {
         Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00));
         List<Ticket> tickets = bookingFacade.getBookedTickets(event, 2, 1);
+
         assertEquals(2, tickets.size());
         assertTrue(tickets.stream().anyMatch(t -> t.getId() == 7L));
         assertFalse(tickets.stream().anyMatch(t -> t.getId() == 1L));
@@ -212,11 +233,15 @@ class BookingFacadeTest {
 
     @Test
     void cancelTicket() {
-        User user = new User(4l, "Jan Nowak", "j.nowak@gmail.com");
+        User user = new User(4, "Jan Nowak", "j.nowak@gmail.com");
+        BigDecimal userAccountAfterRefund = BigDecimal.valueOf(180.30).setScale(2);
         boolean ticketDeleted = bookingFacade.cancelTicket(7);
-        assertTrue(ticketDeleted);
         List<Ticket> tickets = bookingFacade.getBookedTickets(user, 1, 0);
+        UserAccount userAccount = bookingFacade.getUserAccountByUserId(user.getId());
+
+        assertTrue(ticketDeleted);
         assertTrue(tickets.isEmpty());
+        assertEquals(userAccountAfterRefund, userAccount.getFunds());
     }
 
     @Test
@@ -226,6 +251,7 @@ class BookingFacadeTest {
 
         User user = new User(7, "Newes Userus", "n.u@gmail.com");
         bookingFacade.createUser(user);
+        bookingFacade.topUpUserAccount(7, BigDecimal.valueOf(100.00));
 
         Ticket ticket = bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);
         List<Ticket> ticketsByEvent = bookingFacade.getBookedTickets(event, 2, 0);
@@ -235,5 +261,15 @@ class BookingFacadeTest {
         assertTrue(ticket.getId() != 0);
         assertEquals(1, ticketsByEvent.size());
         assertEquals(ticketsByEvent, ticketsByUser);
+
+        UserAccount newUserAccount = bookingFacade.getUserAccountByUserId(7);
+        assertEquals(BigDecimal.valueOf(90.00).setScale(2), newUserAccount.getFunds());
+    }
+
+    @Test
+    void ThrowIllegalStateExceptionWhenAttemptingToBookATicketWithInsufficientFunds() {
+        assertThrows(IllegalStateException.class, () -> {
+            Ticket ticket = bookingFacade.bookTicket(6, 1, 10, Ticket.Category.STANDARD);
+        }, "Illegal State Exception was expected");
     }
 }
