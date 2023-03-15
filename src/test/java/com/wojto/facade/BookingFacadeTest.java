@@ -2,6 +2,8 @@ package com.wojto.facade;
 
 import com.wojto.EventApp;
 import com.wojto.model.*;
+import net.sf.ehcache.CacheManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -28,6 +30,13 @@ class BookingFacadeTest {
     void setUp() {
         ApplicationContext context = new AnnotationConfigApplicationContext(EventApp.class);
         bookingFacade = context.getBean(BookingFacadeImpl.class);
+    }
+
+    @AfterEach
+    void cleanup() {
+        CacheManager.getInstance().getCache("eventCache").removeAll();
+        CacheManager.getInstance().getCache("userCache").removeAll();
+        CacheManager.getInstance().getCache("userAccountCache").removeAll();
     }
 
     @Test
@@ -271,5 +280,35 @@ class BookingFacadeTest {
         assertThrows(IllegalStateException.class, () -> {
             Ticket ticket = bookingFacade.bookTicket(6, 1, 10, Ticket.Category.STANDARD);
         }, "Illegal State Exception was expected");
+    }
+
+    @Test
+    void cacheTest() throws ParseException {
+        bookingFacade.getEventById(1);
+        bookingFacade.getEventById(2);
+        bookingFacade.getEventById(2);
+        bookingFacade.getEventById(2);
+
+        bookingFacade.getUserById(1);
+        bookingFacade.getUserById(3);
+        bookingFacade.getUserById(3);
+
+        bookingFacade.getUserAccountById(2);
+        bookingFacade.getUserAccountById(4);
+        bookingFacade.getUserAccountById(4);
+        bookingFacade.getUserAccountById(6);
+
+
+        int eventCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
+                .getCache("eventCache").getSize();
+        int userCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
+                .getCache("userCache").getSize();
+        int userAccountCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
+                .getCache("userAccountCache").getSize();
+
+
+        assertTrue(eventCacheSize == 2);
+        assertTrue(userCacheSize == 2);
+        assertTrue(userAccountCacheSize == 3);
     }
 }

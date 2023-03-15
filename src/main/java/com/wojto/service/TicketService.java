@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,8 @@ public class TicketService {
         Page<Ticket> page = ticketDao.getAllTickets(PageRequest.of(pageNum, pageSize));
         return page.getContent();
     }
-    
+
+    @Cacheable("ticketCache")
     public Ticket findTicketById(long ticketId) {
         LOGGER.info("Calling TicketDao for ticket with id: " + ticketId);
         return ticketDao.getTicketById(ticketId);

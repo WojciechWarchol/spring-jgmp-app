@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class UserService {
         return page.getContent();
     }
 
+    @Cacheable("userCache")
     public User getUserById(long userId) {
         LOGGER.info("Calling UserDao for user with id: " + userId);
         return userDao.getUserById(userId);

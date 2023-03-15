@@ -6,8 +6,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -28,6 +35,7 @@ import java.text.SimpleDateFormat;
 @EntityScan("com.wojto.model")
 @EnableTransactionManagement
 @EnableAutoConfiguration
+@EnableCaching
 public class EventApp {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventApp.class);
@@ -53,22 +61,6 @@ public class EventApp {
         System.out.println(bookingFacade.getEventsByTitle("IT", 1, 0));
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         System.out.println(bookingFacade.getEventsForDay(dateFormat.parse("13-04-2023"), 1, 0));
-
-//        System.out.println("Testing MySQL connection");
-//        MysqlDataSource dataSource = new MysqlDataSource();
-//        dataSource.setServerName("localhost");
-//        dataSource.setPortNumber(3306);
-//        dataSource.setDatabaseName("spring_jgmp");
-//        dataSource.setUser("jgmpuser");
-//        dataSource.setPassword("password1234");
-//        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-//        String sql = "CREATE TABLE events (\n" +
-//                "    id BIGINT AUTO_INCREMENT PRIMARY KEY,\n" +
-//                "    title VARCHAR(120) NOT NULL,\n" +
-//                "    date DATETIME\n" +
-//                ");";
-//
-//        jdbcTemplate.execute(sql);
 
         LOGGER.info("Ending Application");
     }
@@ -108,4 +100,25 @@ public class EventApp {
         return transactionManager;
     }
 
+    @Bean
+    public CacheManager cacheManager() {
+        return new EhCacheCacheManager(ehCacheManager().getObject());
+    }
+
+    @Bean
+    public EhCacheManagerFactoryBean ehCacheManager() {
+        EhCacheManagerFactoryBean factory = new EhCacheManagerFactoryBean();
+        factory.setConfigLocation(new ClassPathResource("ehcache.xml"));
+        factory.setShared(true);
+        return factory;
+    }
+
+//    @Bean
+//    public CacheManager cacheManager() {
+//        return new ConcurrentMapCacheManager("events");
+//    }
+
+//    @Bean public CacheManager cacheManager() {
+//        SimpleCacheManager cacheManager = new SimpleCacheManager();
+//    }
 }

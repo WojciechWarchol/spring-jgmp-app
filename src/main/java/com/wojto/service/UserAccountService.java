@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class UserAccountService {
         return page.getContent();
     }
 
+    @Cacheable("userAccountCache")
     public UserAccount getUserAccountById(long accountId) {
         LOGGER.info("Calling DBUserAccountRepository for account with id: " + accountId);
         return userAccountRepository.findById(accountId);
