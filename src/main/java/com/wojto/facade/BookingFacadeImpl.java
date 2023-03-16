@@ -94,6 +94,7 @@ public class BookingFacadeImpl implements BookingFacade{
     }
 
     @Override
+    @Transactional
     public User createUser(User user) {
         LOGGER.info("Calling UserService to create user: " + user);
         user = userService.createUser(user);
