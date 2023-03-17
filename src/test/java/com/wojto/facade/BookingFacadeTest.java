@@ -1,12 +1,17 @@
 package com.wojto.facade;
 
+import com.wojto.EventApp;
 import com.wojto.model.*;
+import net.sf.ehcache.CacheManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -16,14 +21,22 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookingFacadeTest {
 
+    @Autowired
     private BookingFacadeImpl bookingFacade;
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     @BeforeEach
     void setUp() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("file:src/main/java/ApplicationContext.xml");
-        bookingFacade = (BookingFacadeImpl) context.getBean("bookingFacade");
+        ApplicationContext context = new AnnotationConfigApplicationContext(EventApp.class);
+        bookingFacade = context.getBean(BookingFacadeImpl.class);
+    }
+
+    @AfterEach
+    void cleanup() {
+        CacheManager.getInstance().getCache("eventCache").removeAll();
+        CacheManager.getInstance().getCache("userCache").removeAll();
+        CacheManager.getInstance().getCache("userAccountCache").removeAll();
     }
 
     @Test
@@ -53,10 +66,15 @@ class BookingFacadeTest {
 
     @Test
     void getEventsByTitlePaginationTest() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00).setScale(2));
         List<Event> eventList = bookingFacade.getEventsByTitle("Event", 1, 0);
+        Event eventFromList = eventList.get(0);
+
         assertEquals(1, eventList.size());
-        assertEquals(event, eventList.get(0));
+        assertEquals(event.getId(), eventFromList.getId());
+        assertEquals(event.getTitle(), eventFromList.getTitle());
+        assertEquals(event.getDate(), eventFromList.getDate());
+        assertEquals(event.getTicketPrice(), eventFromList.getTicketPrice());
     }
 
     @Test
@@ -73,24 +91,33 @@ class BookingFacadeTest {
 
     @Test
     void createEvent() throws ParseException {
-        Event newEvent = new EventImpl(4, "New Event", dateFormat.parse("15-05-2023"));
+        Event newEvent = new Event(4, "New Event", dateFormat.parse("15-05-2023"), BigDecimal.valueOf(10.00).setScale(2));
         bookingFacade.createEvent(newEvent);
         Event polledNewEvent = bookingFacade.getEventById(4);
-        assertEquals(newEvent, polledNewEvent);
+
+        assertEquals(newEvent.getId(), polledNewEvent.getId());
+        assertEquals(newEvent.getTitle(), polledNewEvent.getTitle());
+        assertEquals(newEvent.getDate(), polledNewEvent.getDate());
+        assertEquals(newEvent.getTicketPrice(), polledNewEvent.getTicketPrice());
     }
 
     @Test
     void updateEvent() throws ParseException {
-        Event updatedEvent = new EventImpl(1, "Updated Event", dateFormat.parse("06-06-2023"));
+        Event updatedEvent = new Event(1, "Updated Event", dateFormat.parse("06-06-2023"), BigDecimal.valueOf(33.00).setScale(2));
         bookingFacade.updateEvent(updatedEvent);
         Event polledUpdatedEvent = bookingFacade.getEventById(1);
-        assertEquals(updatedEvent, polledUpdatedEvent);
+
+        assertEquals(updatedEvent.getId(), polledUpdatedEvent.getId());
+        assertEquals(updatedEvent.getTitle(), polledUpdatedEvent.getTitle());
+        assertEquals(updatedEvent.getDate(), polledUpdatedEvent.getDate());
+        assertEquals(updatedEvent.getTicketPrice(), polledUpdatedEvent.getTicketPrice());
     }
 
     @Test
     void deleteExistingEventAndReturnTrue() {
         boolean eventWasDeleted = bookingFacade.deleteEvent(1);
         Event event = bookingFacade.getEventById(1);
+
         assertTrue(eventWasDeleted);
         assertNull(event);
     }
@@ -127,17 +154,19 @@ class BookingFacadeTest {
 
     @Test
     void createUser() {
-        User newUser = new UserImpl(7 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
+        User newUser = new User(7 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
         bookingFacade.createUser(newUser);
         User polledNewUser = bookingFacade.getUserByEmail("zbychu@gmail.com");
+
         assertEquals(newUser, polledNewUser);
     }
 
     @Test
     void updateUser() {
-        User updatedUser = new UserImpl(1 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
+        User updatedUser = new User(1 , "Zbyszek Zbyszkowski", "zbychu@gmail.com");
         bookingFacade.updateUser(updatedUser);
         User polledNewUser = bookingFacade.getUserById(1);
+
         assertEquals(updatedUser, polledNewUser);
     }
 
@@ -145,6 +174,7 @@ class BookingFacadeTest {
     void deleteUserAndReturnTrue() {
         boolean userDeleted = bookingFacade.deleteUser(2);
         User user = bookingFacade.getUserById(2);
+
         assertTrue(userDeleted);
         assertNull(user);
     }
@@ -168,7 +198,7 @@ class BookingFacadeTest {
         assertEquals(category, ticket.getCategory());
 
         List<Ticket> ticketsForUser = bookingFacade.getBookedTickets(
-                new UserImpl(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com"),10,0);
+                new User(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com"),10,0);
         assertTrue(ticketsForUser.contains(ticket));
     }
 
@@ -181,26 +211,30 @@ class BookingFacadeTest {
         assertThrows(IllegalStateException.class, () -> {
             Ticket ticket = bookingFacade.bookTicket(userId, eventId, place, category);
         }, "Illegal State Exception was expected");
+
+//        BigDecimal userAccountBalanceBeforeTicketReservation = bookingFacade.userAccountService.getUserAccountByUserId(2).getFunds();
+//        assertEquals(BigDecimal.valueOf(200.00).setScale(2), userAccountBalanceBeforeTicketReservation);
     }
 
     @Test
     void getBookedTicketsForUser() {
-        User user = new UserImpl(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com");
+        User user = new User(1l, "Jozef Malolepszy", "jozef.malolepszy@gmail.com");
         List<Ticket> tickets = bookingFacade.getBookedTickets(user, 3, 0);
         assertEquals(2, tickets.size());
     }
 
     @Test
     void getBookedTicketsForEvent() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00));
         List<Ticket> tickets = bookingFacade.getBookedTickets(event, 10, 0);
         assertEquals(4, tickets.size());
     }
 
     @Test
     void getBookedTicketsForEventAndCheckPagination() throws ParseException {
-        Event event = new EventImpl(1l, "Music Event", dateFormat.parse("01-01-2023"));
+        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00));
         List<Ticket> tickets = bookingFacade.getBookedTickets(event, 2, 1);
+
         assertEquals(2, tickets.size());
         assertTrue(tickets.stream().anyMatch(t -> t.getId() == 7L));
         assertFalse(tickets.stream().anyMatch(t -> t.getId() == 1L));
@@ -208,20 +242,25 @@ class BookingFacadeTest {
 
     @Test
     void cancelTicket() {
-        User user = new UserImpl(4l, "Jan Nowak", "j.nowak@gmail.com");
+        User user = new User(4, "Jan Nowak", "j.nowak@gmail.com");
+        BigDecimal userAccountAfterRefund = BigDecimal.valueOf(180.30).setScale(2);
         boolean ticketDeleted = bookingFacade.cancelTicket(7);
-        assertTrue(ticketDeleted);
         List<Ticket> tickets = bookingFacade.getBookedTickets(user, 1, 0);
+        UserAccount userAccount = bookingFacade.getUserAccountByUserId(user.getId());
+
+        assertTrue(ticketDeleted);
         assertTrue(tickets.isEmpty());
+        assertEquals(userAccountAfterRefund, userAccount.getFunds());
     }
 
     @Test
     void bookTicketForNewlyCreatedEventAndUser() throws ParseException {
-        Event event = new EventImpl(4, "New Event", dateFormat.parse("07-07-2023"));
+        Event event = new Event(4, "New Event", dateFormat.parse("07-07-2023"), BigDecimal.valueOf(10.00));
         bookingFacade.createEvent(event);
 
-        User user = new UserImpl(7, "Newes Userus", "n.u@gmail.com");
+        User user = new User(7, "Newes Userus", "n.u@gmail.com");
         bookingFacade.createUser(user);
+        bookingFacade.topUpUserAccount(7, BigDecimal.valueOf(100.00));
 
         Ticket ticket = bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);
         List<Ticket> ticketsByEvent = bookingFacade.getBookedTickets(event, 2, 0);
@@ -231,5 +270,45 @@ class BookingFacadeTest {
         assertTrue(ticket.getId() != 0);
         assertEquals(1, ticketsByEvent.size());
         assertEquals(ticketsByEvent, ticketsByUser);
+
+        UserAccount newUserAccount = bookingFacade.getUserAccountByUserId(7);
+        assertEquals(BigDecimal.valueOf(90.00).setScale(2), newUserAccount.getFunds());
+    }
+
+    @Test
+    void ThrowIllegalStateExceptionWhenAttemptingToBookATicketWithInsufficientFunds() {
+        assertThrows(IllegalStateException.class, () -> {
+            Ticket ticket = bookingFacade.bookTicket(6, 1, 10, Ticket.Category.STANDARD);
+        }, "Illegal State Exception was expected");
+    }
+
+    @Test
+    void cacheTest() throws ParseException {
+        bookingFacade.getEventById(1);
+        bookingFacade.getEventById(2);
+        bookingFacade.getEventById(2);
+        bookingFacade.getEventById(2);
+
+        bookingFacade.getUserById(1);
+        bookingFacade.getUserById(3);
+        bookingFacade.getUserById(3);
+
+        bookingFacade.getUserAccountById(2);
+        bookingFacade.getUserAccountById(4);
+        bookingFacade.getUserAccountById(4);
+        bookingFacade.getUserAccountById(6);
+
+
+        int eventCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
+                .getCache("eventCache").getSize();
+        int userCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
+                .getCache("userCache").getSize();
+        int userAccountCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
+                .getCache("userAccountCache").getSize();
+
+
+        assertTrue(eventCacheSize == 2);
+        assertTrue(userCacheSize == 2);
+        assertTrue(userAccountCacheSize == 3);
     }
 }

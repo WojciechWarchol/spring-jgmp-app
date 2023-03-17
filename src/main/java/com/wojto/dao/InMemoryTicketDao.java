@@ -8,21 +8,26 @@ import com.wojto.storage.mappers.TicketMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Repository
 public class InMemoryTicketDao implements TicketDao, InMemoryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryTicketDao.class);
 
+    @Autowired
     TicketInMemoryStorage ticketInMemoryStorage;
 
-    private static String fileName;
+    @Value("${dao.inmemory.ticket.contentfile}")
+    private String fileName;
     private static final String[] PARAM_NAMES = new String[] { "id", "eventId", "userId", "category", "place" };
     private static final Class<Ticket> SUPPORTED_CLASS_TYPE = Ticket.class;
 
@@ -31,8 +36,8 @@ public class InMemoryTicketDao implements TicketDao, InMemoryDao {
         return fileName;
     }
 
-    public static void setFileName(String fileName) {
-        InMemoryTicketDao.fileName = fileName;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override

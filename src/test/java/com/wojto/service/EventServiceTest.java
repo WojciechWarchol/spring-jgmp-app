@@ -1,6 +1,6 @@
 package com.wojto.service;
 
-import com.wojto.dao.InMemoryEventDao;
+import com.wojto.dao.DBEventRepository;
 import com.wojto.model.Event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +24,7 @@ class EventServiceTest {
     private EventService eventService;
 
     @Mock
-    private InMemoryEventDao inMemoryEventDaoMock;
+    private DBEventRepository dbEventRepository;
     @Mock
     private List<Event> eventListMock;
     @Mock
@@ -38,7 +37,7 @@ class EventServiceTest {
 
     @Test
     void findAllEvents() {
-        when(inMemoryEventDaoMock.getAllEvents(any())).thenReturn(eventPageMock);
+        when(dbEventRepository.getAllEvents(any())).thenReturn(eventPageMock);
         when(eventPageMock.getContent()).thenReturn(eventListMock);
         List<Event> eventList = eventService.findAllEvents(5, 0);
         assertNotNull(eventList);
@@ -46,14 +45,14 @@ class EventServiceTest {
 
     @Test
     void findEventById() {
-        when(inMemoryEventDaoMock.getEventById(anyLong())).thenReturn(eventMock);
+        when(dbEventRepository.getEventById(anyLong())).thenReturn(eventMock);
         Event event = eventService.findEventById(1);
         assertNotNull(event);
     }
 
     @Test
     void findEventsByTitle() {
-        when(inMemoryEventDaoMock.getEventsByTitle(anyString(), any())).thenReturn(eventPageMock);
+        when(dbEventRepository.getEventsByTitle(anyString(), any())).thenReturn(eventPageMock);
         when(eventPageMock.getContent()).thenReturn(eventListMock);
         List<Event> eventList = eventService.findEventsByTitle("Title", 5, 0);
         assertNotNull(eventList);
@@ -61,7 +60,7 @@ class EventServiceTest {
 
     @Test
     void getEventsForDay() throws ParseException {
-        when(inMemoryEventDaoMock.getEventsForDay(any(), any())).thenReturn(eventPageMock);
+        when(dbEventRepository.getEventsForDay(any(), any())).thenReturn(eventPageMock);
         when(eventPageMock.getContent()).thenReturn(eventListMock);
         List<Event> eventList = eventService.getEventsForDay(dateFormat.parse("01-01-2023"), 5, 2);
         assertNotNull(eventList);
@@ -69,21 +68,21 @@ class EventServiceTest {
 
     @Test
     void createEvent() {
-        when(inMemoryEventDaoMock.createEvent(eventMock)).thenReturn(eventMock);
+        when(dbEventRepository.createEvent(eventMock)).thenReturn(eventMock);
         Event event = eventService.createEvent(eventMock);
         assertEquals(eventMock, event);
     }
 
     @Test
     void updateEvent() {
-        when(inMemoryEventDaoMock.updateEvent(eventMock)).thenReturn(eventMock);
+        when(dbEventRepository.updateEvent(eventMock)).thenReturn(eventMock);
         Event event = eventService.updateEvent(eventMock);
         assertEquals(eventMock, event);
     }
 
     @Test
     void deleteEvent() {
-        when(inMemoryEventDaoMock.deleteEvent(anyLong())).thenReturn(true);
+        when(dbEventRepository.deleteEvent(anyLong())).thenReturn(true);
         boolean eventDeleted = eventService.deleteEvent(1);
         assertTrue(eventDeleted);
     }

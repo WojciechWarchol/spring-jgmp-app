@@ -4,7 +4,9 @@ package com.wojto.facade;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
+import com.wojto.model.UserAccount;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -139,5 +141,11 @@ public interface BookingFacade {
      * @return Flag whether anything has been canceled.
      */
     boolean cancelTicket(long ticketId);
+
+    UserAccount getUserAccountById(long accountId);
+
+    UserAccount getUserAccountByUserId(long userId);
+
+    UserAccount topUpUserAccount(long userId, BigDecimal amount);
 
 }
