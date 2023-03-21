@@ -16,6 +16,7 @@ public class TomcatInitializer {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);
         Context tomcatContex = tomcat.addContext("", System.getProperty("java.io.tmpdir"));
+        tomcatContex.addParameter("contextConfigLocation", "/WEB-INF/applicationContext.xml");
         tomcatContex.addApplicationListener(ContextLoaderListener.class.getName());
 
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
