@@ -1,7 +1,10 @@
 package com.wojto.facade;
 
-import com.wojto.EventApp;
-import com.wojto.model.*;
+import com.wojto.EventAppConfig;
+import com.wojto.model.Event;
+import com.wojto.model.Ticket;
+import com.wojto.model.User;
+import com.wojto.model.UserAccount;
 import net.sf.ehcache.CacheManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +31,7 @@ class BookingFacadeTest {
 
     @BeforeEach
     void setUp() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(EventApp.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(EventAppConfig.class);
         bookingFacade = context.getBean(BookingFacadeImpl.class);
     }
 
@@ -254,7 +257,7 @@ class BookingFacadeTest {
     }
 
     @Test
-    void bookTicketForNewlyCreatedEventAndUser() throws ParseException {
+    void bookTicketForNewlyCreatedEventAndUser() throws Exception {
         Event event = new Event(4, "New Event", dateFormat.parse("07-07-2023"), BigDecimal.valueOf(10.00));
         bookingFacade.createEvent(event);
 

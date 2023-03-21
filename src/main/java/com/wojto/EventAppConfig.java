@@ -1,19 +1,19 @@
 package com.wojto;
 
-import com.wojto.facade.BookingFacadeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
-import org.springframework.cache.support.SimpleCacheManager;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -23,10 +23,13 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 
 import javax.sql.DataSource;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 @Configuration
 @ComponentScan("com.wojto.*")
@@ -36,49 +39,60 @@ import java.text.SimpleDateFormat;
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @EnableCaching
-public class EventApp {
+@EnableWebMvc
+public class EventAppConfig extends WebMvcConfigurationSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventApp.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventAppConfig.class);
 
-    private static ApplicationContext context;
-
+    //    private static ApplicationContext context;
+//
     @Autowired
     DataSource dataSource;
+//
+//    BookingFacadeImpl bookingFacade;
 
-    BookingFacadeImpl bookingFacade;
+//    public static void main(String[] args) throws ParseException {
 
-    public static void main(String[] args) throws ParseException {
+//        LOGGER.info("Initializing Application Context");
+//        context = new AnnotationConfigApplicationContext(EventAppConfig.class);
+//        LOGGER.info("Initialized");
+//
+//        LOGGER.info("Creating BookingFacade and performing autowiring");
+//        BookingFacadeImpl bookingFacade = context.getBean(BookingFacadeImpl.class);
+//        LOGGER.info("Initialized BookingFacade with dependencies");
+//        System.out.println(bookingFacade.getEventById(1).getTitle());
+//        System.out.println(bookingFacade.getUserById(1).getName());
+//        System.out.println(bookingFacade.getEventsByTitle("IT", 1, 0));
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+//        System.out.println(bookingFacade.getEventsForDay(dateFormat.parse("13-04-2023"), 1, 0));
+//
+//        LOGGER.info("Ending Application");
+//    }
 
-        LOGGER.info("Initializing Application Context");
-        context = new AnnotationConfigApplicationContext(EventApp.class);
-        LOGGER.info("Initialized");
+    @Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("css/**", "images/**")
+                .addResourceLocations("classpath:/css/", "classpath:/images/");
+    }
 
-        LOGGER.info("Creating BookingFacade and performing autowiring");
-        BookingFacadeImpl bookingFacade = context.getBean(BookingFacadeImpl.class);
-        LOGGER.info("Initialized BookingFacade with dependencies");
-        System.out.println(bookingFacade.getEventById(1).getTitle());
-        System.out.println(bookingFacade.getUserById(1).getName());
-        System.out.println(bookingFacade.getEventsByTitle("IT", 1, 0));
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        System.out.println(bookingFacade.getEventsForDay(dateFormat.parse("13-04-2023"), 1, 0));
-
-        LOGGER.info("Ending Application");
+    @Bean
+    public InternalResourceViewResolver jspViewResolver() {
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setPrefix("/WEB-INF/jsp/");
+        viewResolver.setSuffix(".jsp");
+        viewResolver.setViewClass(JstlView.class);
+        return viewResolver;
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
-//        EntityManagerFactory manager = new LocalContainerEntityManagerFactoryBean();
         emf.setDataSource(dataSource);
         emf.setPackagesToScan("com.wojto.model");
 
         JpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-//        jpaVendorAdapter.setDatabase(Database.MYSQL);
-//        jpaVendorAdapter.setDatabasePlatform("org.hibernate.dialect.MySQL5InnoDBDialect");
-//        jpaVendorAdapter.setShowSql(true);
 
         emf.setJpaVendorAdapter(jpaVendorAdapter);
-//        emf.setJpaProperties(additionalProperties());
 
         return emf;
     }
@@ -112,13 +126,4 @@ public class EventApp {
         factory.setShared(true);
         return factory;
     }
-
-//    @Bean
-//    public CacheManager cacheManager() {
-//        return new ConcurrentMapCacheManager("events");
-//    }
-
-//    @Bean public CacheManager cacheManager() {
-//        SimpleCacheManager cacheManager = new SimpleCacheManager();
-//    }
 }

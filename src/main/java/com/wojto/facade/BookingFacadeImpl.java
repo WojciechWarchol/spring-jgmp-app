@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -119,22 +118,22 @@ public class BookingFacadeImpl implements BookingFacade{
     @Override
     @Transactional
     public Ticket bookTicket(long userId, long eventId, int place, Ticket.Category category) {
-        LOGGER.info(
-                String.format("Calling Event Service, UserAccount Service and TicketService to book ticket with userId: %d, eventId: %d, place: %d, category: %s",
-                        userId, eventId, place, category));
-        LOGGER.info("Checking ticket price for event: " + eventId);
-        Event event = eventService.findEventById(eventId);
-        BigDecimal ticketPrice = event.getTicketPrice();
-        LOGGER.info("Attempting to deduct payment for ticket: " + ticketPrice + " from user: " + userId);
-        boolean fundDeductionSuccessful = userAccountService.deductFundsFromAccount(userId, ticketPrice);
-        if (fundDeductionSuccessful) {
-            LOGGER.info("Proceeding to book ticket after successfully deducting payment");
-            Ticket bookedTicket = ticketService.bookTicket(userId, eventId, place, category);
-            return bookedTicket;
-        } else {
-            LOGGER.error("Payment deduction failed. Performing rollback");
-            throw new IllegalStateException("Payment deduction failed!");
-        }
+            LOGGER.info(
+                    String.format("Calling Event Service, UserAccount Service and TicketService to book ticket with userId: %d, eventId: %d, place: %d, category: %s",
+                            userId, eventId, place, category));
+            LOGGER.info("Checking ticket price for event: " + eventId);
+            Event event = eventService.findEventById(eventId);
+            BigDecimal ticketPrice = event.getTicketPrice();
+            LOGGER.info("Attempting to deduct payment for ticket: " + ticketPrice + " from user: " + userId);
+            boolean fundDeductionSuccessful = userAccountService.deductFundsFromAccount(userId, ticketPrice);
+            if (fundDeductionSuccessful) {
+                LOGGER.info("Proceeding to book ticket after successfully deducting payment");
+                Ticket bookedTicket = ticketService.bookTicket(userId, eventId, place, category);
+                return bookedTicket;
+            } else {
+                LOGGER.error("Payment deduction failed. Performing rollback");
+                throw new IllegalStateException("Payment deduction failed!");
+            }
     }
 
     @Override
