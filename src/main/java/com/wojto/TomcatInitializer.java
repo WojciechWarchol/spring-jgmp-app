@@ -1,13 +1,10 @@
 package com.wojto;
 
-import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.Servlet;
+import java.io.File;
 
 public class TomcatInitializer {
 
@@ -15,17 +12,24 @@ public class TomcatInitializer {
 
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);
-        Context tomcatContex = tomcat.addContext("", System.getProperty("java.io.tmpdir"));
-        tomcatContex.addParameter("contextConfigLocation", "/WEB-INF/applicationContext.xml");
-        tomcatContex.addApplicationListener(ContextLoaderListener.class.getName());
+        tomcat.getConnector();
+//        tomcat.setBaseDir("target/tomcat");
+//        tomcat.getHost().setAppBase("eventapp");
 
-        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(EventAppConfig.class);
+        String contextPath = "/";
+        String webappDir = new File("src/main/resources").getAbsolutePath();
+        StandardContext context = (StandardContext) tomcat.addWebapp(contextPath, webappDir);
 
+//        Context tomcatContex = tomcat.addContext("", System.getProperty("java.io.tmpdir"));
+//        tomcatContex.addParameter("contextConfigLocation", "/WEB-INF/conf/applicationContext.xml");
+//        tomcatContex.addApplicationListener(ContextLoaderListener.class.getName());
 
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(context);
-        Tomcat.addServlet(tomcatContex, "dispatcherServlet", (Servlet) dispatcherServlet);
-        tomcatContex.addServletMappingDecoded("/", "dispatcherServlet");
+//        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+//        context.register(EventAppConfig.class);
+//
+//        DispatcherServlet dispatcherServlet = new DispatcherServlet(context);
+//        Tomcat.addServlet(tomcatContex, "dispatcherServlet", (Servlet) dispatcherServlet);
+//        tomcatContex.addServletMappingDecoded("/", "dispatcherServlet");
 
         try {
             tomcat.start();

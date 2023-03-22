@@ -100,6 +100,16 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -122,10 +132,16 @@
             <artifactId>tomcat-embed-jasper</artifactId>
             <version>9.0.73</version>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-websocket</artifactId>
-            <version>9.0.73</version>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.0.11.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring5</artifactId>
+            <version>3.0.11.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -139,12 +155,7 @@
             <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.mockito</groupId>-->
-        <!--            <artifactId>mockito-core</artifactId>-->
-        <!--            <version>5.1.1</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -160,8 +171,25 @@
 <!--        <sourceDirectory>src</sourceDirectory>-->
         <plugins>
 <!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <finalName>spring-jgmp-app</finalName>-->
+<!--&lt;!&ndash;                    <contextPath>/spring-jgmp-app</contextPath>&ndash;&gt;-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
 <!--                <artifactId>maven-war-plugin</artifactId>-->
 <!--                <version>3.0.0</version>-->
+<!--                <configuration>-->
+<!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
+<!--                    <webResources>-->
+<!--                        <resource>-->
+<!--                            <directory>src/main/webapp</directory>-->
+<!--                            <filtering>true</filtering>-->
+<!--                        </resource>-->
+<!--                    </webResources>-->
+<!--                </configuration>-->
 <!--            </plugin>-->
 <!--            <plugin>-->
 <!--                <groupId>org.apache.tomcat.maven</groupId>-->
