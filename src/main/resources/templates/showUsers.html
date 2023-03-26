@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event App</title>
+</head>
+<body>
+<h2>Found Users:</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="user : ${userList}">
+            <td th:text="${user.id}"/>
+            <td th:text="${user.email}"/>
+            <td th:text="${user.name}"/>
+            <td>
+                <form th:action="@{/userAccounts/getUserAccountByUserId}" method="get">
+                    <input type="hidden" name="userId" th:value="${user.id}" />
+                    <button type="submit">Show User Account</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/users/updateUserForm}" method="get">
+                    <input type="hidden" name="userId" th:value="${user.id}" />
+                    <button type="submit">Edit</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/users/deleteUser}" method="post">
+                    <input type="hidden" name="userId" th:value="${user.id}" />
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event App</title>
+</head>
+<body>
+<h2 th:if="${user}">Edit User:</h2>
+<h2 th:unless="${user}">Create User:</h2>
+<form th:if="${user == null}" action="/users/createUser" method="post">
+    <input name="email" placeholder="Email">
+    <input name="name" placeholder="Name">
+    <input type="submit" value="Create">
+</form>
+<form th:if="${user != null}" action="/users/updateUser" method="post">
+    <input type="hidden" name="id" th:value="${user.id}">
+    <input name="email" th:value="${user.email}" placeholder="Email">
+    <input name="name" th:value="${user.name}" placeholder="Name">
+    <input type="submit" value="Update">
+</form>
+</body>
+</html>

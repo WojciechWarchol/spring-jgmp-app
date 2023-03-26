@@ -53,7 +53,13 @@ public class EventService {
 
     public Event createEvent(Event event) {
         LOGGER.info("Calling EventDao to create event: " + event);
-        return eventDao.createEvent(event);
+        Event createdEvent = eventDao.createEvent(event);
+        if (event != null) {
+            LOGGER.info("Successfully created event: " + createdEvent);
+        } else {
+            LOGGER.error("There was a problem while creating event: " + event);
+        }
+        return createdEvent;
     }
 
     public Event updateEvent(Event event) {

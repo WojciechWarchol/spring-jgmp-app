@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event App</title>
+</head>
+<body>
+<h2>Found Tickets:</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Event ID</th>
+            <th>User ID</th>
+            <th>Place</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="ticket : ${ticketList}">
+            <td th:text="${ticket.id}"/>
+            <td th:text="${ticket.eventId}"/>
+            <td th:text="${ticket.userId}"/>
+            <td th:text="${ticket.place}"/>
+            <td th:text="${ticket.category}"/>
+            <td>
+                <form th:action="@{/tickets/cancelTicket}" method="post">
+                    <input type="hidden" name="ticketId" th:value="${ticket.id}" />
+                    <button type="submit">Cancel Ticket</button>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

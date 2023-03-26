@@ -30,6 +30,12 @@ public class Event{
         this.ticketPrice = ticketPrice;
     }
 
+    public Event(String title, Date date, BigDecimal ticketPrice) {
+        this.title = title;
+        this.date = date;
+        this.ticketPrice = ticketPrice;
+    }
+
     public long getId() {
         return id;
     }

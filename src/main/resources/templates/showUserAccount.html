@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event App</title>
+</head>
+<body>
+<h2>User Account:</h2>
+<table>
+    <tr>
+        <td>ID:</td>
+        <td th:text="${userAccount.userId}"></td>
+    </tr>
+    <tr>
+        <td>Funds:</td>
+        <td th:text="${userAccount.funds}"></td>
+    </tr>
+    <tr>
+        <td>
+            <form th:action="@{/userAccounts/topUp}" method="post">
+                <input type="hidden" name="userId" th:value="${userAccount.userId}"/>
+                <input name="amount" placeholder="Amount"/>
+                <button type="submit">TopUp</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
