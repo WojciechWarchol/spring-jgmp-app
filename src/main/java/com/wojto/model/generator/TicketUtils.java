@@ -6,13 +6,18 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.wojto.model.Ticket;
+import com.wojto.model.unmarshaller.Tickets;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-public class TicketPdfGenerator {
+public class TicketUtils {
 
-    public static byte[] generatePdf(List<Ticket> tickets) throws DocumentException {
+    public static byte[] createPdfFromTicketList(List<Ticket> tickets) throws DocumentException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document();
         PdfWriter.getInstance(document, baos);
@@ -33,6 +38,16 @@ public class TicketPdfGenerator {
 
         document.close();
         return baos.toByteArray();
+    }
+
+    public static List<Ticket> createTicketListFromMultipartFile(MultipartFile file) throws Exception {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setClassesToBeBound(Tickets.class);
+        marshaller.afterPropertiesSet();
+        Unmarshaller unmarshaller = marshaller.createUnmarshaller();
+        Tickets ticketsWrapper = (Tickets) unmarshaller.unmarshal(new StreamSource(file.getInputStream()));
+        List<Ticket> ticketList = ticketsWrapper.getTickets();
+        return ticketList;
     }
 
 }

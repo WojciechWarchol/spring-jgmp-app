@@ -1,24 +1,35 @@
 package com.wojto.model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name="tickets")
+@XmlRootElement(name="ticket")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Ticket {
 
     public enum Category {STANDARD, PREMIUM, BAR}
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @XmlAttribute(name = "Id")
     private long id;
     @Column
+    @XmlAttribute(name = "eventId")
     private long eventId;
     @Column
+    @XmlAttribute(name = "userId")
     private long userId;
     @Column
     @Enumerated(EnumType.STRING)
+    @XmlAttribute(name = "category")
     private Category category;
     @Column
+    @XmlAttribute(name = "place")
     private int place;
 
     public Ticket() {

@@ -5,24 +5,25 @@ import com.wojto.facade.BookingFacade;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
-import com.wojto.model.generator.TicketPdfGenerator;
+import com.wojto.model.generator.TicketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -33,6 +34,9 @@ public class TicketController {
 
     @Autowired
     BookingFacade bookingFacade;
+
+    @Autowired
+    PlatformTransactionManager transactionManager;
 
     @GetMapping("/forUser")
     String getTicketsForUser(@RequestParam("userId") long userId, Model model) {
@@ -49,7 +53,7 @@ public class TicketController {
         User user = bookingFacade.getUserById(userId);
         List<Ticket> ticketList = bookingFacade.getBookedTickets(user, 10, 0);
 
-        byte[] pdfBytes = TicketPdfGenerator.generatePdf(ticketList);
+        byte[] pdfBytes = TicketUtils.createPdfFromTicketList(ticketList);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -59,7 +63,7 @@ public class TicketController {
     }
 
     @GetMapping("/forEvent")
-    String getTicketsForEvent(@RequestParam("eventId") long eventId, Model model){
+    String getTicketsForEvent(@RequestParam("eventId") long eventId, Model model) {
         LOGGER.info("TicketController.getTicketsForEvent() method called");
         Event event = bookingFacade.getEventById(eventId);
         List<Ticket> ticketList = bookingFacade.getBookedTickets(event, 10, 0);
@@ -88,4 +92,35 @@ public class TicketController {
         // TODO Probably attach a "successful delete to the model
         return "index";
     }
+
+    @PostMapping("/bookTickets")
+    String bookTickets(@RequestParam("file") MultipartFile file, Model model) throws Exception {
+        List<Ticket> ticketList = new ArrayList<>();
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                List<Ticket> unmarshalledTickets = null;
+                try {
+                    unmarshalledTickets = TicketUtils.createTicketListFromMultipartFile(file);
+                } catch (Exception e) {
+                    LOGGER.error("Error during XML Unmarshalling");
+                    throw new RuntimeException(e);
+                }
+                for (Ticket ticket : unmarshalledTickets) {
+                    long userId = ticket.getUserId();
+                    long eventId = ticket.getEventId();
+                    int place = ticket.getPlace();
+                    Ticket.Category category = ticket.getCategory();
+                    Ticket bookedTicket = bookingFacade.bookTicket(userId, eventId, place, category);
+                    ticketList.add(bookedTicket);
+                }
+            }
+        });
+
+        model.addAttribute("ticketList", ticketList);
+        return "showTickets";
+    }
+
 }
