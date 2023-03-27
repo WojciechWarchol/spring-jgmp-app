@@ -25,7 +25,7 @@ public class UserAccountController {
 
     @GetMapping("/getUserAccountByUserId")
     String getUserAccountByUserId(@RequestParam("userId") long userId, Model model) {
-        LOGGER.info("userAccountController.getUserAccountByUserId() method called");
+        LOGGER.debug("userAccountController.getUserAccountByUserId() method called");
         UserAccount userAccount = bookingFacade.getUserAccountByUserId(userId);
         model.addAttribute("userAccount", userAccount);
         return "showUserAccount";
@@ -33,7 +33,7 @@ public class UserAccountController {
 
     @PostMapping("/topUp")
     String topUp(@RequestParam("userId") long userId, @RequestParam("amount") BigDecimal amount, Model model) {
-        LOGGER.info("userAcconuntController.topUp() method called");
+        LOGGER.debug("userAcconuntController.topUp() method called");
         UserAccount userAccount = bookingFacade.topUpUserAccount(userId, amount);
         model.addAttribute("userAccount", userAccount);
         return "showUserAccount";

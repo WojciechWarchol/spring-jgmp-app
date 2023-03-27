@@ -25,7 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -34,6 +34,7 @@ import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import com.wojto.exception.handler.CustomHandlerExceptionResolver;
 
 import javax.sql.DataSource;
 
@@ -49,31 +50,9 @@ import javax.sql.DataSource;
 public class EventAppConfig extends WebMvcConfigurationSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventAppConfig.class);
-
-    //    private static ApplicationContext context;
-//
+    
     @Autowired
     DataSource dataSource;
-//
-//    BookingFacadeImpl bookingFacade;
-
-//    public static void main(String[] args) throws ParseException {
-
-//        LOGGER.info("Initializing Application Context");
-//        context = new AnnotationConfigApplicationContext(EventAppConfig.class);
-//        LOGGER.info("Initialized");
-//
-//        LOGGER.info("Creating BookingFacade and performing autowiring");
-//        BookingFacadeImpl bookingFacade = context.getBean(BookingFacadeImpl.class);
-//        LOGGER.info("Initialized BookingFacade with dependencies");
-//        System.out.println(bookingFacade.getEventById(1).getTitle());
-//        System.out.println(bookingFacade.getUserById(1).getName());
-//        System.out.println(bookingFacade.getEventsByTitle("IT", 1, 0));
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-//        System.out.println(bookingFacade.getEventsForDay(dateFormat.parse("13-04-2023"), 1, 0));
-//
-//        LOGGER.info("Ending Application");
-//    }
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -149,7 +128,6 @@ public class EventAppConfig extends WebMvcConfigurationSupport {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
         templateEngine.setEnableSpringELCompiler(true);
-//        templateEngine.setTemplateEngineMessageSource(messageSource());
         return templateEngine;
     }
 
@@ -173,4 +151,8 @@ public class EventAppConfig extends WebMvcConfigurationSupport {
         return transactionManager;
     }
 
+    @Bean
+    public HandlerExceptionResolver customHandlerExceptionResolver() {
+        return new CustomHandlerExceptionResolver();
+    }
 }

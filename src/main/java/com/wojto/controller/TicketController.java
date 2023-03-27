@@ -40,7 +40,7 @@ public class TicketController {
 
     @GetMapping("/forUser")
     String getTicketsForUser(@RequestParam("userId") long userId, Model model) {
-        LOGGER.info("TicketController.getTicketsForUser() method called");
+        LOGGER.debug("TicketController.getTicketsForUser() method called");
         User user = bookingFacade.getUserById(userId);
         List<Ticket> ticketList = bookingFacade.getBookedTickets(user, 10, 0);
         model.addAttribute("ticketList", ticketList);
@@ -49,7 +49,7 @@ public class TicketController {
 
     @GetMapping(value = "/forUser", produces = "application/pdf")
     public ResponseEntity<byte[]> getPdfForUser(@RequestParam("userId") long userId) throws IOException, DocumentException {
-        LOGGER.info("TicketController.getPdfForUser() method called");
+        LOGGER.debug("TicketController.getPdfForUser() method called");
         User user = bookingFacade.getUserById(userId);
         List<Ticket> ticketList = bookingFacade.getBookedTickets(user, 10, 0);
 
@@ -64,7 +64,7 @@ public class TicketController {
 
     @GetMapping("/forEvent")
     String getTicketsForEvent(@RequestParam("eventId") long eventId, Model model) {
-        LOGGER.info("TicketController.getTicketsForEvent() method called");
+        LOGGER.debug("TicketController.getTicketsForEvent() method called");
         Event event = bookingFacade.getEventById(eventId);
         List<Ticket> ticketList = bookingFacade.getBookedTickets(event, 10, 0);
         model.addAttribute("ticketList", ticketList);
@@ -73,6 +73,7 @@ public class TicketController {
 
     @GetMapping("/bookTicketForm")
     String goToBookTicketForm() {
+        LOGGER.debug("TicketController.goToBookTicketForm() method called");
         return "bookTicket";
     }
 
@@ -81,13 +82,14 @@ public class TicketController {
                       @RequestParam("eventId") long eventId,
                       @RequestParam("place") int place,
                       @RequestParam("category") Ticket.Category category) {
+        LOGGER.debug("TicketController.bookTicket() method called");
         Ticket ticket = bookingFacade.bookTicket(userId, eventId, place, category);
         return "index";
     }
 
     @PostMapping("/cancelTicket")
     String cancelTicket(@RequestParam("ticketId") long ticketId) {
-        LOGGER.info("TicketController.deleteTicket() method called");
+        LOGGER.debug("TicketController.deleteTicket() method called");
         boolean ticketDeleted = bookingFacade.cancelTicket(ticketId);
         // TODO Probably attach a "successful delete to the model
         return "index";
@@ -95,6 +97,7 @@ public class TicketController {
 
     @PostMapping("/bookTickets")
     String bookTickets(@RequestParam("file") MultipartFile file, Model model) throws Exception {
+        LOGGER.debug("TicketController.bookTickets() method called");
         List<Ticket> ticketList = new ArrayList<>();
 
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);

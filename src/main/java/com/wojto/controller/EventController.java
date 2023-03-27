@@ -32,7 +32,7 @@ public class EventController {
 
     @GetMapping("/{eventId}")
     String getEventById(@RequestParam("eventId") long eventId, Model model) {
-        LOGGER.info("EventController.getEventById() method called");
+        LOGGER.debug("EventController.getEventById() method called");
         Event event = bookingFacade.getEventById(eventId);
         List<Event> eventList = Arrays.asList(event);
         model.addAttribute("eventList", eventList);
@@ -41,7 +41,7 @@ public class EventController {
 
     @GetMapping("/byTitle")
     String getEventsByTitle(@RequestParam("title") String title, Model model) {
-        LOGGER.info("EventController.getEventsByTitle() method called");
+        LOGGER.debug("EventController.getEventsByTitle() method called");
         List<Event> eventList = bookingFacade.getEventsByTitle(title, 10, 0);
         model.addAttribute("eventList", eventList);
         return "showEvents";
@@ -49,7 +49,7 @@ public class EventController {
 
     @GetMapping("/forDay")
     String getEventsForDay(@RequestParam("day") String day, Model model) throws ParseException {
-        LOGGER.info("EventController.getEventsForDay() method called");
+        LOGGER.debug("EventController.getEventsForDay() method called");
         Date date = dateFormat.parse(day);
         List<Event> eventList = bookingFacade.getEventsForDay(date, 10, 0);
         model.addAttribute("eventList", eventList);
@@ -58,18 +58,21 @@ public class EventController {
 
     @GetMapping("/createEventForm")
     String goToCreateEventForm() {
+        LOGGER.debug("EventController.goToCreateEventForm() method called");
         return "createEvent";
     }
 
     @PostMapping("/createEvent")
     String createEvent(@RequestParam("title") String title, @RequestParam("day") String day, @RequestParam("ticketPrice") BigDecimal ticketPrice) throws ParseException {
+        LOGGER.debug("EventController.createEvent() method called");
         Event event = bookingFacade.createEvent(
                 new Event(title, dateFormat.parse(day), ticketPrice));
         return "index";
     }
 
     @GetMapping("/updateEventForm")
-    public String goToEditeEventForm(@RequestParam("eventId") Long eventId, Model model) {
+    public String goToEditedEventForm(@RequestParam("eventId") Long eventId, Model model) {
+        LOGGER.debug("EventController.goToEditedEventForm() method called");
         Event event = bookingFacade.getEventById(eventId);
         model.addAttribute("event", event);
         return "createEvent";
@@ -80,6 +83,7 @@ public class EventController {
                        @RequestParam("title") String title,
                        @RequestParam("day") String day,
                        @RequestParam("ticketPrice") BigDecimal ticketPrice) throws ParseException {
+        LOGGER.debug("EventController.updateEvent() method called");
         Event event = bookingFacade.getEventById(id);
 
         event.setTitle(title);
@@ -93,7 +97,7 @@ public class EventController {
 
     @PostMapping("/deleteEvent")
     String deleteEvent(@RequestParam("eventId") long eventId) {
-        LOGGER.info("EventController.deleteEvent() method called");
+        LOGGER.debug("EventController.deleteEvent() method called");
         boolean eventDeleted = bookingFacade.deleteEvent(eventId);
         // TODO Probably attach a "successful delete to the model
         return "index";

@@ -30,7 +30,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     String getUserById(@RequestParam("userId") long userId, Model model) {
-        LOGGER.info("userController.getUserById() method called");
+        LOGGER.debug("userController.getUserById() method called");
         User user = bookingFacade.getUserById(userId);
         List<User> userList = Arrays.asList(user);
         model.addAttribute("userList", userList);
@@ -39,7 +39,7 @@ public class UserController {
 
     @GetMapping("/byEmail")
     String getUserByEmail(@RequestParam("email") String email, Model model) {
-        LOGGER.info("UserController.getUserByEmail() method called");
+        LOGGER.debug("UserController.getUserByEmail() method called");
         User user = bookingFacade.getUserByEmail(email);
         List<User> userList = Arrays.asList(user);
         model.addAttribute("userList", userList);
@@ -48,7 +48,7 @@ public class UserController {
 
     @GetMapping("/byName")
     String getUsersForDay(@RequestParam("name") String name, Model model) throws ParseException {
-        LOGGER.info("UserController.getUsersByName() method called");
+        LOGGER.debug("UserController.getUsersByName() method called");
         List<User> userList = bookingFacade.getUsersByName(name, 10, 0);
         model.addAttribute("userList", userList);
         return "showUsers";
@@ -56,11 +56,13 @@ public class UserController {
 
     @GetMapping("/createUserForm")
     String goToCreateUserForm() {
+        LOGGER.debug("UserController.goToCreateUserForm() method called");
         return "createUser";
     }
 
     @PostMapping("/createUser")
     String createUser(@RequestParam("email") String email, @RequestParam("name") String name) throws ParseException {
+        LOGGER.debug("UserController.createUser() method called");
         User user = bookingFacade.createUser(
                 new User(email, name));
         return "index";
@@ -68,6 +70,7 @@ public class UserController {
 
     @GetMapping("/updateUserForm")
     public String goToEditUserForm(@RequestParam("userId") Long userId, Model model) {
+        LOGGER.debug("UserController.goToEditUserForm() method called");
         User user = bookingFacade.getUserById(userId);
         model.addAttribute("user", user);
         return "createUser";
@@ -77,6 +80,7 @@ public class UserController {
     String updateUser(@RequestParam("id") long id,
                        @RequestParam("email") String email,
                        @RequestParam("name") String name) throws ParseException {
+        LOGGER.debug("UserController.updateUser() method called");
         User user = bookingFacade.getUserById(id);
 
         user.setEmail(email);
@@ -89,7 +93,7 @@ public class UserController {
 
     @PostMapping("/deleteUser")
     String deleteUser(@RequestParam("userId") long userId) {
-        LOGGER.info("UserController.deleteUser() method called");
+        LOGGER.debug("UserController.deleteUser() method called");
         boolean userDeleted = bookingFacade.deleteUser(userId);
         // TODO Probably attach a "successful delete to the model
         return "index";
