@@ -50,7 +50,7 @@ import javax.sql.DataSource;
 public class EventAppConfig extends WebMvcConfigurationSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventAppConfig.class);
-    
+
     @Autowired
     DataSource dataSource;
 
