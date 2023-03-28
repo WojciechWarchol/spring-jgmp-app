@@ -51,8 +51,8 @@ public class EventAppConfig extends WebMvcConfigurationSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventAppConfig.class);
 
-    @Autowired
-    DataSource dataSource;
+//    @Autowired
+//    DataSource dataSource;
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -95,7 +95,7 @@ public class EventAppConfig extends WebMvcConfigurationSupport {
     @Bean
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory(dataSource).getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactory(dataSource()).getObject());
         return transactionManager;
     }
 

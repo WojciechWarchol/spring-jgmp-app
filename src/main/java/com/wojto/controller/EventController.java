@@ -30,7 +30,7 @@ public class EventController {
     @Autowired
     BookingFacade bookingFacade;
 
-    @GetMapping("/{eventId}")
+    @GetMapping("/byId")
     String getEventById(@RequestParam("eventId") long eventId, Model model) {
         LOGGER.debug("EventController.getEventById() method called");
         Event event = bookingFacade.getEventById(eventId);
