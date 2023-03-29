@@ -29,6 +29,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -46,19 +47,30 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @EnableCaching
-@EnableWebMvc
-public class EventAppConfig extends WebMvcConfigurationSupport {
+//@EnableWebMvc
+public class EventAppConfig /*extends WebMvcConfigurationSupport*/ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventAppConfig.class);
 
 //    @Autowired
 //    DataSource dataSource;
 
-    @Override
+    @Bean
+    public WebMvcConfigurer webMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("css/**", "images/**")
+                        .addResourceLocations("classpath:/css/", "classpath:/images/");
+            }
+        };
+    }
+
+    /*@Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("css/**", "images/**")
                 .addResourceLocations("classpath:/css/", "classpath:/images/");
-    }
+    }*/
 
     @Bean
     public InternalResourceViewResolver jspViewResolver() {

@@ -13,7 +13,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.annotation.Commit;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +27,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@Transactional(isolation = Isolation.READ_UNCOMMITTED)
+@PersistenceContext
 class BookingFacadeTest {
 
     @Autowired
@@ -93,9 +100,15 @@ class BookingFacadeTest {
     }
 
     @Test
+    @Transactional
+    @Rollback(false)
     void createEvent() throws ParseException {
         Event newEvent = new Event(4, "New Event", dateFormat.parse("15-05-2023"), BigDecimal.valueOf(10.00).setScale(2));
         bookingFacade.createEvent(newEvent);
+
+//        entityManager.flush(); // Manually commit the transaction
+//        entityManager.clear(); // Clear the persistence context
+
         Event polledNewEvent = bookingFacade.getEventById(4);
 
         assertEquals(newEvent.getId(), polledNewEvent.getId());
