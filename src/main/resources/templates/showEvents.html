@@ -6,7 +6,8 @@
 </head>
 <body>
 <h2>Found Events:</h2>
-<table>
+<h3 th:if="${#lists.isEmpty(eventList)}">No Events found!</h3>
+<table th:unless="${#lists.isEmpty(eventList)}">
     <thead>
         <tr>
             <th>ID</th>
@@ -16,7 +17,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr th:each="event : ${eventList}">
+        <tr th:each="event : ${eventList}" th:if="${event != null}">
             <td th:text="${event.id}"/>
             <td th:text="${event.title}"/>
             <td th:text="${event.date}"/>

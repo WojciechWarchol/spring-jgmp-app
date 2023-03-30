@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -78,7 +75,7 @@ public class EventController {
         return "createEvent";
     }
 
-    @PostMapping("/updateEvent")
+    @PutMapping("/updateEvent")
     String updateEvent(@RequestParam("id") long id,
                        @RequestParam("title") String title,
                        @RequestParam("day") String day,

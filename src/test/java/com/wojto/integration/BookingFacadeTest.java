@@ -1,6 +1,7 @@
-package com.wojto.facade;
+package com.wojto.integration;
 
 import com.wojto.EventAppConfig;
+import com.wojto.facade.BookingFacadeImpl;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
@@ -10,14 +11,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.annotation.Commit;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -27,8 +28,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//@Transactional(isolation = Isolation.READ_UNCOMMITTED)
-@PersistenceContext
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { EventAppConfig.class })
 class BookingFacadeTest {
 
     @Autowired
@@ -36,10 +37,14 @@ class BookingFacadeTest {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
+//    @PersistenceContext
+//    private EntityManager entityManager;
+
     @BeforeEach
     void setUp() {
         ApplicationContext context = new AnnotationConfigApplicationContext(EventAppConfig.class);
-        bookingFacade = context.getBean(BookingFacadeImpl.class);
+//        bookingFacade = context.getBean(BookingFacadeImpl.class);
+//        entityManager = context.getBean(EntityManager.class);
     }
 
     @AfterEach
@@ -100,14 +105,9 @@ class BookingFacadeTest {
     }
 
     @Test
-    @Transactional
-    @Rollback(false)
     void createEvent() throws ParseException {
         Event newEvent = new Event(4, "New Event", dateFormat.parse("15-05-2023"), BigDecimal.valueOf(10.00).setScale(2));
         bookingFacade.createEvent(newEvent);
-
-//        entityManager.flush(); // Manually commit the transaction
-//        entityManager.clear(); // Clear the persistence context
 
         Event polledNewEvent = bookingFacade.getEventById(4);
 
@@ -227,9 +227,6 @@ class BookingFacadeTest {
         assertThrows(IllegalStateException.class, () -> {
             Ticket ticket = bookingFacade.bookTicket(userId, eventId, place, category);
         }, "Illegal State Exception was expected");
-
-//        BigDecimal userAccountBalanceBeforeTicketReservation = bookingFacade.userAccountService.getUserAccountByUserId(2).getFunds();
-//        assertEquals(BigDecimal.valueOf(200.00).setScale(2), userAccountBalanceBeforeTicketReservation);
     }
 
     @Test

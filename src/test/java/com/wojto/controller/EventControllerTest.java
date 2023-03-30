@@ -16,6 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.ui.Model;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +36,9 @@ import static org.mockito.Mockito.*;
 @AutoConfigureMockMvc(addFilters = false)
 @Import(EventController.class)
 class EventControllerTest {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private EventController eventController;
@@ -85,7 +90,7 @@ class EventControllerTest {
 
     @Test
     void getEventsForDay() throws ParseException {
-        String eventDayString = "01-03-2023";
+        String eventDayString = "01-01-2023";
         Date eventDay = dateFormat.parse(eventDayString);
         List<Event> expectedList = Arrays.asList(eventList.get(0));
         when(bookingFacade.getEventsForDay(any(Date.class), anyInt(), anyInt())).thenReturn(expectedList);

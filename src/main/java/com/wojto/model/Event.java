@@ -77,7 +77,7 @@ public class Event{
 
         if (id != event.id) return false;
         if (!title.equals(event.title)) return false;
-        if (!date.equals(event.date)) return false;
+        if (!(date.compareTo(event.date) == 0)) return false;
         return ticketPrice.equals(event.ticketPrice);
     }
 

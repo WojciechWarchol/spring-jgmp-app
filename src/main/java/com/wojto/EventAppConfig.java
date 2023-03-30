@@ -1,8 +1,8 @@
 package com.wojto;
 
+import com.wojto.exception.handler.CustomHandlerExceptionResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.CacheManager;
@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -26,16 +25,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
-import com.wojto.exception.handler.CustomHandlerExceptionResolver;
 
 import javax.sql.DataSource;
 
@@ -157,11 +153,11 @@ public class EventAppConfig /*extends WebMvcConfigurationSupport*/ {
         return new CommonsMultipartResolver();
     }
 
-    @Bean
-    public PlatformTransactionManager transactionManager(DataSource dataSource) {
-        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-        return transactionManager;
-    }
+//    @Bean
+//    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+//        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+//        return transactionManager;
+//    }
 
     @Bean
     public HandlerExceptionResolver customHandlerExceptionResolver() {
