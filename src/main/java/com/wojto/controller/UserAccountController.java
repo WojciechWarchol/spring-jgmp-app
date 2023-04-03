@@ -5,12 +5,10 @@ import com.wojto.model.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
@@ -23,7 +21,8 @@ public class UserAccountController {
     @Autowired
     BookingFacade bookingFacade;
 
-    @GetMapping("/getUserAccountByUserId")
+    @GetMapping("/byUserId")
+    @ResponseStatus(HttpStatus.OK)
     String getUserAccountByUserId(@RequestParam("userId") long userId, Model model) {
         LOGGER.debug("userAccountController.getUserAccountByUserId() method called");
         UserAccount userAccount = bookingFacade.getUserAccountByUserId(userId);
@@ -32,6 +31,7 @@ public class UserAccountController {
     }
 
     @PostMapping("/topUp")
+    @ResponseStatus(HttpStatus.OK)
     String topUp(@RequestParam("userId") long userId, @RequestParam("amount") BigDecimal amount, Model model) {
         LOGGER.debug("userAcconuntController.topUp() method called");
         UserAccount userAccount = bookingFacade.topUpUserAccount(userId, amount);

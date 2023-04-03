@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = {EventAppConfig.class})
 @AutoConfigureMockMvc(addFilters = false)
 @Import(EventController.class)
-class EventControllerTest {
+class EventControllerIntegrationTest {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -66,7 +66,7 @@ class EventControllerTest {
     }
 
     @Test
-    void getEventById() throws Exception {
+    void testGetEventById() throws Exception {
         long eventId = 1;
         List<Event> expectedList = Arrays.asList(testEvent);
         when(bookingFacade.getEventById(eventId)).thenReturn(testEvent);
@@ -78,7 +78,7 @@ class EventControllerTest {
     }
 
     @Test
-    void getEventsByTitle() throws Exception {
+    void testGetEventsByTitle() throws Exception {
         String eventTitleFragment = "Event";
         when(bookingFacade.getEventsByTitle(eventTitleFragment, 10, 0)).thenReturn(eventList);
 
@@ -89,7 +89,7 @@ class EventControllerTest {
     }
 
     @Test
-    void getEventsForDay() throws ParseException {
+    void testGetEventsForDay() throws ParseException {
         String eventDayString = "01-01-2023";
         Date eventDay = dateFormat.parse(eventDayString);
         List<Event> expectedList = Arrays.asList(eventList.get(0));
@@ -102,7 +102,7 @@ class EventControllerTest {
     }
 
     @Test
-    void createEvent() throws ParseException {
+    void testCreateEvent() throws ParseException {
         String eventTitle = "Test Event";
         String dateString = "01-03-2023";
         BigDecimal ticketPrice = BigDecimal.valueOf(10.00);
@@ -115,7 +115,7 @@ class EventControllerTest {
     }
 
     @Test
-    void goToEditedEventForm() {
+    void testGoToEditedEventForm() {
         long eventId = 4L;
         when(bookingFacade.getEventById(eventId)).thenReturn(testEvent);
 
@@ -126,7 +126,7 @@ class EventControllerTest {
     }
 
     @Test
-    void updateEvent() throws ParseException {
+    void testUpdateEvent() throws ParseException {
         long eventId = 4L;
         String eventTitle = "Test Event 2";
         String dateString = "02-03-2023";
@@ -143,7 +143,7 @@ class EventControllerTest {
     }
 
     @Test
-    void deleteEvent() {
+    void testDeleteEvent() {
         long eventId = 4L;
         when(bookingFacade.deleteEvent(eventId)).thenReturn(true);
 

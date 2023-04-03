@@ -16,10 +16,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -39,23 +36,36 @@ public class TicketController {
     PlatformTransactionManager transactionManager;
 
     @GetMapping("/forUser")
+    @ResponseStatus(HttpStatus.OK)
     String getTicketsForUser(@RequestParam("userId") long userId, Model model) {
         LOGGER.debug("TicketController.getTicketsForUser() method called");
+        List<Ticket> ticketList = new ArrayList<>();
         User user = bookingFacade.getUserById(userId);
-        List<Ticket> ticketList = bookingFacade.getBookedTickets(user, 10, 0);
+        List<Ticket> foundTickets = bookingFacade.getBookedTickets(user, 10, 0);
+
+        if (foundTickets != null) ticketList.addAll(foundTickets);
         model.addAttribute("ticketList", ticketList);
+
         return "showTickets";
     }
 
     @GetMapping(value = "/forUser", produces = "application/pdf")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<byte[]> getPdfForUser(@RequestParam("userId") long userId) throws IOException, DocumentException {
         LOGGER.debug("TicketController.getPdfForUser() method called");
+        List<Ticket> ticketList = new ArrayList<>();
         User user = bookingFacade.getUserById(userId);
-        List<Ticket> ticketList = bookingFacade.getBookedTickets(user, 10, 0);
+        List<Ticket> foundTickets = bookingFacade.getBookedTickets(user, 10, 0);
+        HttpHeaders headers = new HttpHeaders();
+
+        if (foundTickets != null) {
+            ticketList.addAll(foundTickets);
+        } else {
+            return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
+        }
 
         byte[] pdfBytes = TicketUtils.createPdfFromTicketList(ticketList);
 
-        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDisposition(ContentDisposition.builder("inline").filename("tickets.pdf").build());
         headers.setContentLength(pdfBytes.length);
@@ -63,11 +73,16 @@ public class TicketController {
     }
 
     @GetMapping("/forEvent")
+    @ResponseStatus(HttpStatus.OK)
     String getTicketsForEvent(@RequestParam("eventId") long eventId, Model model) {
         LOGGER.debug("TicketController.getTicketsForEvent() method called");
+        List<Ticket> ticketList = new ArrayList<>();
         Event event = bookingFacade.getEventById(eventId);
-        List<Ticket> ticketList = bookingFacade.getBookedTickets(event, 10, 0);
+        List<Ticket> foundTickets = bookingFacade.getBookedTickets(event, 10, 0);
+
+        if (foundTickets != null) ticketList.addAll(foundTickets);
         model.addAttribute("ticketList", ticketList);
+
         return "showTickets";
     }
 
@@ -78,6 +93,7 @@ public class TicketController {
     }
 
     @PostMapping("/bookTicket")
+    @ResponseStatus(HttpStatus.CREATED)
     String bookTicket(@RequestParam("userId") long userId,
                       @RequestParam("eventId") long eventId,
                       @RequestParam("place") int place,
@@ -88,14 +104,15 @@ public class TicketController {
     }
 
     @PostMapping("/cancelTicket")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     String cancelTicket(@RequestParam("ticketId") long ticketId) {
         LOGGER.debug("TicketController.deleteTicket() method called");
         boolean ticketDeleted = bookingFacade.cancelTicket(ticketId);
-        // TODO Probably attach a "successful delete to the model
         return "index";
     }
 
     @PostMapping("/bookTickets")
+    @ResponseStatus(HttpStatus.CREATED)
     String bookTickets(@RequestParam("file") MultipartFile file, Model model) throws Exception {
         LOGGER.debug("TicketController.bookTickets() method called");
         List<Ticket> ticketList = new ArrayList<>();

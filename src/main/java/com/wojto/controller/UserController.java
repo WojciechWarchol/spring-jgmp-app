@@ -1,22 +1,18 @@
 package com.wojto.controller;
 
 import com.wojto.facade.BookingFacade;
-import com.wojto.model.Event;
 import com.wojto.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -28,29 +24,43 @@ public class UserController {
     @Autowired
     BookingFacade bookingFacade;
 
-    @GetMapping("/{userId}")
+    @GetMapping("/byId")
+    @ResponseStatus(HttpStatus.OK)
     String getUserById(@RequestParam("userId") long userId, Model model) {
         LOGGER.debug("userController.getUserById() method called");
+        List<User> userList = new ArrayList<>();
         User user = bookingFacade.getUserById(userId);
-        List<User> userList = Arrays.asList(user);
+
+        if (user != null) userList.add(user);
         model.addAttribute("userList", userList);
+
         return "showUsers";
     }
 
     @GetMapping("/byEmail")
+    @ResponseStatus(HttpStatus.OK)
     String getUserByEmail(@RequestParam("email") String email, Model model) {
         LOGGER.debug("UserController.getUserByEmail() method called");
+        List<User> userList = new ArrayList<>();
         User user = bookingFacade.getUserByEmail(email);
-        List<User> userList = Arrays.asList(user);
+        List<User> foundUsers = Arrays.asList(user);
+
+        if (foundUsers != null) userList.addAll(foundUsers);
         model.addAttribute("userList", userList);
+
         return "showUsers";
     }
 
     @GetMapping("/byName")
-    String getUsersForDay(@RequestParam("name") String name, Model model) throws ParseException {
+    @ResponseStatus(HttpStatus.OK)
+    String getUsersByName(@RequestParam("name") String name, Model model) throws ParseException {
         LOGGER.debug("UserController.getUsersByName() method called");
-        List<User> userList = bookingFacade.getUsersByName(name, 10, 0);
+        List<User> userList = new ArrayList<>();
+        List<User> foundUsers = bookingFacade.getUsersByName(name, 10, 0);
+
+        if (foundUsers != null) userList.addAll(foundUsers);
         model.addAttribute("userList", userList);
+
         return "showUsers";
     }
 
@@ -61,10 +71,11 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    String createUser(@RequestParam("email") String email, @RequestParam("name") String name) throws ParseException {
+    @ResponseStatus(HttpStatus.CREATED)
+    String createUser(@RequestParam("name") String name, @RequestParam("email") String email) throws ParseException {
         LOGGER.debug("UserController.createUser() method called");
         User user = bookingFacade.createUser(
-                new User(email, name));
+                new User(name, email));
         return "index";
     }
 
@@ -76,10 +87,11 @@ public class UserController {
         return "createUser";
     }
 
-    @PostMapping("/updateUser")
+    @PutMapping("/updateUser")
+    @ResponseStatus(HttpStatus.CREATED)
     String updateUser(@RequestParam("id") long id,
-                       @RequestParam("email") String email,
-                       @RequestParam("name") String name) throws ParseException {
+                      @RequestParam("email") String email,
+                      @RequestParam("name") String name) throws ParseException {
         LOGGER.debug("UserController.updateUser() method called");
         User user = bookingFacade.getUserById(id);
 
@@ -91,7 +103,8 @@ public class UserController {
         return "index";
     }
 
-    @PostMapping("/deleteUser")
+    @DeleteMapping("/deleteUser")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     String deleteUser(@RequestParam("userId") long userId) {
         LOGGER.debug("UserController.deleteUser() method called");
         boolean userDeleted = bookingFacade.deleteUser(userId);

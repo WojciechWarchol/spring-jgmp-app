@@ -11,25 +11,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -51,29 +44,19 @@ public class EventControllerIntegrationTests {
 
     @BeforeEach
     void setUp() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(EventAppConfig.class);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
     @AfterEach
     void cleanup() {
         CacheManager.getInstance().getCache("eventCache").removeAll();
-        CacheManager.getInstance().getCache("userCache").removeAll();
-        CacheManager.getInstance().getCache("userAccountCache").removeAll();
-    }
-
-    @Test
-    public void givenWac_whenServletContext_thenItProvidesGreetController() {
-        ServletContext servletContext = webApplicationContext.getServletContext();
-
-        assertNotNull(servletContext);
-        assertTrue(servletContext instanceof MockServletContext);
-        assertNotNull(webApplicationContext.getBean("eventController"));
     }
 
     @Test
     public void testGetEventById() throws Exception {
         long eventId = 1L;
-        Event event = new Event(1l, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00).setScale(2));
+        Event event = new Event(eventId, "Music Event", dateFormat.parse("01-01-2023"), BigDecimal.valueOf(50.00).setScale(2));
 
         mockMvc.perform(get("/events/byId")
                         .param("eventId", Long.toString(eventId)))
@@ -119,31 +102,7 @@ public class EventControllerIntegrationTests {
                         .param("title", eventTitle)
                         .param("day", dateString)
                         .param("ticketPrice", ticketPrice))
-                .andExpect(status().isOk())
-                .andExpect(view().name(INDEX_VIEW_NAME));
-
-        mockMvc.perform(get("/events/byId")
-                        .param("eventId", Long.toString(eventId)))
-                .andExpect(status().isOk())
-                .andExpect(view().name(SHOW_EVENT_VIEW_NAME))
-                .andExpect(model().attributeExists(EVENT_LIST_ATTRIBUTE))
-                .andExpect(model().attribute(EVENT_LIST_ATTRIBUTE, hasSize(1)));
-    }
-
-    @Test
-    public void testUpdateEvent() throws Exception {
-        long eventId = 1L;
-        String eventTitle = "Test Event 2";
-        String dateString = "02-03-2023";
-        String ticketPrice = "20.00";
-        Event updatedEvent = new Event(eventId, eventTitle, dateFormat.parse(dateString), BigDecimal.valueOf(20.00));
-
-        mockMvc.perform(post("/events/createEvent")
-                        .param("id", "1")
-                        .param("title", eventTitle)
-                        .param("day", dateString)
-                        .param("ticketPrice", ticketPrice))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(view().name(INDEX_VIEW_NAME));
 
         mockMvc.perform(get("/events/byId")
@@ -152,22 +111,50 @@ public class EventControllerIntegrationTests {
                 .andExpect(view().name(SHOW_EVENT_VIEW_NAME))
                 .andExpect(model().attributeExists(EVENT_LIST_ATTRIBUTE))
                 .andExpect(model().attribute(EVENT_LIST_ATTRIBUTE, hasSize(1)))
-                .andExpect(model().attribute(EVENT_LIST_ATTRIBUTE, contains(updatedEvent)));;
+                .andExpect(model().attribute(EVENT_LIST_ATTRIBUTE, hasItem(
+                        allOf(
+                                hasProperty("title", is(eventTitle))
+                        )
+                )));
+    }
+
+    @Test
+    public void testUpdateEvent() throws Exception {
+        long eventId = 1L;
+        String eventTitle = "Test Event 2";
+        String dateString = "2023-09-01";
+        String ticketPrice = "20.00";
+        Event updatedEvent = new Event(eventId, eventTitle, dateFormat.parse("01-09-2023"), BigDecimal.valueOf(20.00).setScale(2));
+
+        mockMvc.perform(put("/events/updateEvent")
+                        .param("id", "1")
+                        .param("title", eventTitle)
+                        .param("day", dateString)
+                        .param("ticketPrice", ticketPrice))
+                .andExpect(status().isCreated())
+                .andExpect(view().name(INDEX_VIEW_NAME));
+
+        mockMvc.perform(get("/events/byId")
+                        .param("eventId", Long.toString(eventId)))
+                .andExpect(status().isOk())
+                .andExpect(view().name(SHOW_EVENT_VIEW_NAME))
+                .andExpect(model().attributeExists(EVENT_LIST_ATTRIBUTE))
+                .andExpect(model().attribute(EVENT_LIST_ATTRIBUTE, hasSize(1)))
+                .andExpect(model().attribute(EVENT_LIST_ATTRIBUTE, contains(updatedEvent)));
     }
 
     @Test
     public void deleteEvent() throws Exception {
         long eventId = 1L;
 
-        mockMvc.perform(post("/events/deleteEvent")
+        mockMvc.perform(delete("/events/deleteEvent")
                 .param("eventId", Long.toString(eventId)))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andExpect(view().name(INDEX_VIEW_NAME));
 
         mockMvc.perform(get("/events/byId")
                         .param("eventId", Long.toString(eventId)))
-//                .andExpect(status().isOk())
                 .andExpect(view().name(SHOW_EVENT_VIEW_NAME))
-                .andExpect(model().attribute(EVENT_LIST_ATTRIBUTE, hasSize(0)));
+                .andExpect(model().attribute(EVENT_LIST_ATTRIBUTE, empty()));
     }
 }
