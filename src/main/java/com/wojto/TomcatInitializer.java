@@ -13,23 +13,10 @@ public class TomcatInitializer {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);
         tomcat.getConnector();
-//        tomcat.setBaseDir("target/tomcat");
-//        tomcat.getHost().setAppBase("eventapp");
 
         String contextPath = "/";
         String webappDir = new File("src/main/resources").getAbsolutePath();
         StandardContext context = (StandardContext) tomcat.addWebapp(contextPath, webappDir);
-
-//        Context tomcatContex = tomcat.addContext("", System.getProperty("java.io.tmpdir"));
-//        tomcatContex.addParameter("contextConfigLocation", "/WEB-INF/conf/applicationContext.xml");
-//        tomcatContex.addApplicationListener(ContextLoaderListener.class.getName());
-
-//        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-//        context.register(EventAppConfig.class);
-//
-//        DispatcherServlet dispatcherServlet = new DispatcherServlet(context);
-//        Tomcat.addServlet(tomcatContex, "dispatcherServlet", (Servlet) dispatcherServlet);
-//        tomcatContex.addServletMappingDecoded("/", "dispatcherServlet");
 
         try {
             tomcat.start();
@@ -37,6 +24,7 @@ public class TomcatInitializer {
                 LifecycleException e) {
             throw new RuntimeException(e);
         }
+
         tomcat.getServer().await();
     }
 }

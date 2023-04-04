@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -99,14 +98,7 @@ public class EventController {
                        @RequestParam("day") String day,
                        @RequestParam("ticketPrice") BigDecimal ticketPrice) throws ParseException {
         LOGGER.debug("EventController.updateEvent() method called");
-        Event event = bookingFacade.getEventById(id);
-
-        event.setTitle(title);
-        event.setDate(dateFormat.parse(day));
-        event.setTicketPrice(ticketPrice);
-
-        bookingFacade.updateEvent(event);
-
+        bookingFacade.updateEvent(new Event(id, title, dateFormat.parse(day), ticketPrice));
         return "index";
     }
 
@@ -115,7 +107,6 @@ public class EventController {
     String deleteEvent(@RequestParam("eventId") long eventId) {
         LOGGER.debug("EventController.deleteEvent() method called");
         boolean eventDeleted = bookingFacade.deleteEvent(eventId);
-        // TODO Probably attach a "successful delete to the model
         return "index";
     }
 }

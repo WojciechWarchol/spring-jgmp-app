@@ -1,4 +1,4 @@
-package com.wojto.controller;
+package com.wojto.integration;
 
 import com.wojto.EventAppConfig;
 import com.wojto.model.User;

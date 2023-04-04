@@ -12,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,9 +28,6 @@ public class TicketController {
 
     @Autowired
     BookingFacade bookingFacade;
-
-    @Autowired
-    PlatformTransactionManager transactionManager;
 
     @GetMapping("/forUser")
     @ResponseStatus(HttpStatus.OK)
@@ -117,27 +111,7 @@ public class TicketController {
         LOGGER.debug("TicketController.bookTickets() method called");
         List<Ticket> ticketList = new ArrayList<>();
 
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                List<Ticket> unmarshalledTickets = null;
-                try {
-                    unmarshalledTickets = TicketUtils.createTicketListFromMultipartFile(file);
-                } catch (Exception e) {
-                    LOGGER.error("Error during XML Unmarshalling");
-                    throw new RuntimeException(e);
-                }
-                for (Ticket ticket : unmarshalledTickets) {
-                    long userId = ticket.getUserId();
-                    long eventId = ticket.getEventId();
-                    int place = ticket.getPlace();
-                    Ticket.Category category = ticket.getCategory();
-                    Ticket bookedTicket = bookingFacade.bookTicket(userId, eventId, place, category);
-                    ticketList.add(bookedTicket);
-                }
-            }
-        });
+        bookingFacade.bookTicketsFromMultipartFile(file, ticketList, this);
 
         model.addAttribute("ticketList", ticketList);
         return "showTickets";

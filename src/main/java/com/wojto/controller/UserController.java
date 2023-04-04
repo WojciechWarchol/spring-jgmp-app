@@ -93,13 +93,7 @@ public class UserController {
                       @RequestParam("email") String email,
                       @RequestParam("name") String name) throws ParseException {
         LOGGER.debug("UserController.updateUser() method called");
-        User user = bookingFacade.getUserById(id);
-
-        user.setEmail(email);
-        user.setName(name);
-
-        bookingFacade.updateUser(user);
-
+        bookingFacade.updateUser(new User(id, name, email));
         return "index";
     }
 
@@ -108,7 +102,6 @@ public class UserController {
     String deleteUser(@RequestParam("userId") long userId) {
         LOGGER.debug("UserController.deleteUser() method called");
         boolean userDeleted = bookingFacade.deleteUser(userId);
-        // TODO Probably attach a "successful delete to the model
         return "index";
     }
 

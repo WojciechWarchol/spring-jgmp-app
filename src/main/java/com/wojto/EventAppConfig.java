@@ -27,8 +27,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -43,13 +41,9 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @EnableCaching
-//@EnableWebMvc
-public class EventAppConfig /*extends WebMvcConfigurationSupport*/ {
+public class EventAppConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventAppConfig.class);
-
-//    @Autowired
-//    DataSource dataSource;
 
     @Bean
     public WebMvcConfigurer webMvcConfigurer() {
@@ -60,21 +54,6 @@ public class EventAppConfig /*extends WebMvcConfigurationSupport*/ {
                         .addResourceLocations("classpath:/css/", "classpath:/images/");
             }
         };
-    }
-
-    /*@Override
-    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("css/**", "images/**")
-                .addResourceLocations("classpath:/css/", "classpath:/images/");
-    }*/
-
-    @Bean
-    public InternalResourceViewResolver jspViewResolver() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/jsp/");
-        viewResolver.setSuffix(".jsp");
-        viewResolver.setViewClass(JstlView.class);
-        return viewResolver;
     }
 
     @Bean
@@ -152,12 +131,6 @@ public class EventAppConfig /*extends WebMvcConfigurationSupport*/ {
     public MultipartResolver multipartResolver() {
         return new CommonsMultipartResolver();
     }
-
-//    @Bean
-//    public PlatformTransactionManager transactionManager(DataSource dataSource) {
-//        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-//        return transactionManager;
-//    }
 
     @Bean
     public HandlerExceptionResolver customHandlerExceptionResolver() {

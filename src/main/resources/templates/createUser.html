@@ -7,12 +7,12 @@
 <body>
 <h2 th:if="${user}">Edit User:</h2>
 <h2 th:unless="${user}">Create User:</h2>
-<form th:if="${user == null}" action="/users/createUser" method="post">
+<form th:if="${user == null}" action="/users/createUser" method="post" enctype="application/json">
     <input name="email" placeholder="Email">
     <input name="name" placeholder="Name">
     <input type="submit" value="Create">
 </form>
-<form th:if="${user != null}" action="/users/updateUser" method="post">
+<form th:if="${user != null}" action="/users/updateUser" method="post" enctype="application/json">
     <input type="hidden" name="id" th:value="${user.id}">
     <input name="email" th:value="${user.email}" placeholder="Email">
     <input name="name" th:value="${user.name}" placeholder="Name">

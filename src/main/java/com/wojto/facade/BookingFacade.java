@@ -1,10 +1,12 @@
 package com.wojto.facade;
 
 
+import com.wojto.controller.TicketController;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
 import com.wojto.model.UserAccount;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -148,4 +150,5 @@ public interface BookingFacade {
 
     UserAccount topUpUserAccount(long userId, BigDecimal amount);
 
+    void bookTicketsFromMultipartFile(MultipartFile file, List<Ticket> ticketList, TicketController ticketController);
 }

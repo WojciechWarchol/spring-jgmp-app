@@ -5,6 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.wojto.exception.TicketPdfCreationException;
 import com.wojto.model.Ticket;
 import com.wojto.model.unmarshaller.Tickets;
 import org.slf4j.Logger;
@@ -31,18 +32,24 @@ public class TicketUtils {
         LOGGER.debug("document opened");
 
         Font font = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
-        for (Ticket ticket : tickets) {
+        tickets.stream().forEach(ticket -> {
             LOGGER.debug("Adding ticket to pdf document: " + ticket.toString());
             Paragraph paragraph = new Paragraph("Ticket #" + ticket.getId(), font);
             paragraph.setSpacingAfter(10);
-            document.add(paragraph);
-
-            document.add(new Paragraph("Event ID: " + ticket.getEventId()));
-            document.add(new Paragraph("User ID: " + ticket.getUserId()));
-            document.add(new Paragraph("Category: " + ticket.getCategory()));
-            document.add(new Paragraph("Place: " + ticket.getPlace()));
-            document.add(new Paragraph(" "));
-        }
+            try {
+                document.add(paragraph);
+                document.add(new Paragraph("Event ID: " + ticket.getEventId()));
+                document.add(new Paragraph("User ID: " + ticket.getUserId()));
+                document.add(new Paragraph("Category: " + ticket.getCategory()));
+                document.add(new Paragraph("Place: " + ticket.getPlace()));
+                document.add(new Paragraph(" "));
+            } catch (DocumentException e) {
+                document.close();
+                String errorMessage = "Error while creating PDF document: " + e.getMessage();
+                LOGGER.error(errorMessage);
+                throw new TicketPdfCreationException(errorMessage);
+            }
+        });
 
         document.close();
         LOGGER.debug("document closed, returning pdf as byte stream");

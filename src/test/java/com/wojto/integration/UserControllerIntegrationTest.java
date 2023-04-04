@@ -1,5 +1,6 @@
-package com.wojto.controller;
+package com.wojto.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wojto.EventAppConfig;
 import com.wojto.model.User;
 import net.sf.ehcache.CacheManager;
@@ -23,7 +24,6 @@ import java.math.BigDecimal;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ContextConfiguration(classes = {EventAppConfig.class})
@@ -110,6 +110,7 @@ class UserControllerIntegrationTest {
         long userId = 7L;
         String name = "Pan Nowy";
         String email = "test@test.com";
+        User passedUser = new User(name, email);
         User user = new User(userId, name, email);
         BigDecimal funds = BigDecimal.valueOf(0.00).setScale(2);
 
@@ -118,6 +119,12 @@ class UserControllerIntegrationTest {
                         .param("email", email))
                 .andExpect(status().isCreated())
                 .andExpect(view().name(INDEX_VIEW_NAME));
+
+/*        mockMvc.perform(post("/users/createUser")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(passedUser)))
+                .andExpect(status().isCreated())
+                .andExpect(view().name(INDEX_VIEW_NAME));*/
 
         mockMvc.perform(get("/users/byId")
                         .param("userId", Long.toString(userId)))
@@ -132,6 +139,17 @@ class UserControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(USER_ACCOUNT_ATTRIBUTE))
                 .andExpect(model().attribute(USER_ACCOUNT_ATTRIBUTE, hasProperty("funds", is(funds))));
+    }
+
+    // Convert object to JSON string
+    public static String asJsonString(final Object obj) {
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            final String jsonContent = mapper.writeValueAsString(obj);
+            return jsonContent;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

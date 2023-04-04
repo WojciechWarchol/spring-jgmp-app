@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = {EventAppConfig.class})
 @AutoConfigureMockMvc(addFilters = false)
 @Import(EventController.class)
-class EventControllerIntegrationTest {
+class EventControllerUnitTest {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -136,9 +136,6 @@ class EventControllerIntegrationTest {
 
         String viewName = eventController.updateEvent(eventId, eventTitle, dateString, ticketPrice);
 
-        verify(mockedEvent).setTitle(eventTitle);
-        verify(mockedEvent).setDate(any(Date.class));
-        verify(mockedEvent).setTicketPrice(ticketPrice);
         assertEquals("index", viewName);
     }
 
