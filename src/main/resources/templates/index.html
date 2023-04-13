@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event App</title>
+
+    <style>
+        .parent-container {
+            display: flex;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            margin-right: 10px;
+        }
+		.box {
+			width: 400px;
+			height: 500px;
+			display: inline-block; /* OR float: left */
+			background-color: gray;
+			color: white;
+			margin-right: 10px; /* Add some space between the boxes */
+			padding: 10px;
+			box-sizing: border-box
+		}
+
+
+
+
+    </style>
+</head>
+<body>
+<h2>Hello from resources file</h2>
+<div class="parent-container">
+    <div class="container">
+        <div class="box">
+            <h2>Events</h2>
+            <section id="event_search">
+                <h3>Search for Event with id:</h3>
+                <form action="/events/byId" method="get">
+                    <input name="eventId" value="">
+                    <input type="submit" value="Search">
+                </form>
+            </section>
+            <section id="event_searchByTitle">
+                <h3>Search for Event by Title:</h3>
+                <form action="/events/byTitle" method="get">
+                    <input name="title" value="">
+                    <input type="submit" value="Search">
+                </form>
+            </section>
+            <section id="event_searchForDay">
+                <h3>Search for Event by Date:</h3>
+                <form action="/events/forDay" method="get">
+                    <input type="date" name="day" value="">
+                    <input type="submit" value="Search">
+                </form>
+            </section>
+            <section id="event_creation">
+                <h3>Event Creation</h3>
+                <form action="/events/createEventForm">
+                    <input type="submit" value="Create Event"/>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <h2>Users</h2>
+            <section id="user_search">
+                <h3>Search for User with id:</h3>
+                <form action="/users/byId" method="get">
+                    <input name="userId" value="">
+                    <input type="submit" value="Search">
+                </form>
+            </section>
+            <section id="user_searchByEmail">
+                <h3>Search for User by Email:</h3>
+                <form action="/users/byEmail" method="get">
+                    <input name="email" value="">
+                    <input type="submit" value="Search">
+                </form>
+            </section>
+            <section id="user_searchByName">
+                <h3>Search for User by Name:</h3>
+                <form action="/users/byName" method="get">
+                    <input name="name" value="">
+                    <input type="submit" value="Search">
+                </form>
+            </section>
+            <section id="user_creation">
+                <h3>User Creation</h3>
+                <form action="/users/createUserForm">
+                    <input type="submit" value="Create User"/>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <h2>Tickets</h2>
+            <section id="ticket_searchByUser">
+                <h3>Search for Tickets by User:</h3>
+                <form action="/tickets/forUser" method="get">
+                    <input name="userId" value="">
+                    <input type="submit" value="Search">
+                </form>
+            </section>
+            <section id="ticket_searchByEvent">
+                <h3>Search for Tickets by Event:</h3>
+                <form action="/tickets/forEvent" method="get">
+                    <input name="eventId" value="">
+                    <input type="submit" value="Search">
+                </form>
+            </section>
+            <section id="ticket_book">
+                <h3>Ticket Booking</h3>
+                <form action="/tickets/bookTicketForm">
+                    <input type="submit" value="Book Ticket"/>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+</body>
+</html>

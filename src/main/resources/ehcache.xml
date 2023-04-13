@@ -1,3 +1,71 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.ehcache.org/v3"
+        xmlns:jsr107="http://www.ehcache.org/v3/jsr107"
+        xsi:schemaLocation="
+            http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd
+            http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
+
+    <cache alias="eventCache">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.wojto.model.Event</value-type>
+        <expiry>
+            <ttl unit="seconds">30</ttl>
+        </expiry>
+
+        <resources>
+            <heap unit="entries">2</heap>
+            <offheap unit="MB">10</offheap>
+        </resources>
+    </cache>
+
+<!--    <cache-template name="eventCache">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.wojto.model.Event</value-type>
+        <heap unit="entries">10</heap>
+    </cache-template>-->
+
+    <cache alias="ticketCache">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.wojto.model.Ticket</value-type>
+        <expiry>
+            <ttl unit="seconds">30</ttl>
+        </expiry>
+
+        <resources>
+            <heap unit="entries">2</heap>
+            <offheap unit="MB">10</offheap>
+        </resources>
+    </cache>
+
+    <cache alias="userCache">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.wojto.model.User</value-type>
+        <expiry>
+            <ttl unit="seconds">30</ttl>
+        </expiry>
+
+        <resources>
+            <heap unit="entries">2</heap>
+            <offheap unit="MB">10</offheap>
+        </resources>
+    </cache>
+
+    <cache alias="userAccountCache">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.wojto.model.UserAccount</value-type>
+        <expiry>
+            <ttl unit="seconds">30</ttl>
+        </expiry>
+
+        <resources>
+            <heap unit="entries">2</heap>
+            <offheap unit="MB">10</offheap>
+        </resources>
+    </cache>
+
+</config>
+
+<!--
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://www.ehcache.org/v3"
@@ -50,4 +118,4 @@
            memoryStoreEvictionPolicy="LFU">
     </cache>
 
-</ehcache>
+</ehcache>-->

@@ -32,7 +32,7 @@ public class UserAccountService {
         return page.getContent();
     }
 
-    @Cacheable("userAccountCache")
+    @Cacheable(value="userAccountCache", key="#accountId", unless="#result == null")
     public UserAccount getUserAccountById(long accountId) {
         LOGGER.info("Calling DBUserAccountRepository for account with id: " + accountId);
         return userAccountRepository.findById(accountId);

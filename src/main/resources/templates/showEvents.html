@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event App</title>
+</head>
+<body>
+<h2>Found Events:</h2>
+<h3 th:if="${#lists.isEmpty(eventList)}">No Events found!</h3>
+<table th:unless="${#lists.isEmpty(eventList)}">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="event : ${eventList}" th:if="${event != null}">
+            <td th:text="${event.id}"/>
+            <td th:text="${event.title}"/>
+            <td th:text="${event.date}"/>
+            <td th:text="${event.ticketPrice}"/>
+            <td>
+                <form th:action="@{/events/updateEventForm}" method="get">
+                    <input type="hidden" name="eventId" th:value="${event.id}" />
+                    <button type="submit">Edit</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/events/deleteEvent}" th:method="delete">
+                    <input type="hidden" name="eventId" th:value="${event.id}" />
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

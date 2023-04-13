@@ -1,16 +1,20 @@
-package com.wojto.facade;
+package com.wojto.integration;
 
-import com.wojto.EventApp;
-import com.wojto.model.*;
-import net.sf.ehcache.CacheManager;
+import com.wojto.facade.BookingFacadeImpl;
+import com.wojto.model.Event;
+import com.wojto.model.Ticket;
+import com.wojto.model.User;
+import com.wojto.model.UserAccount;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,7 +22,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@SpringBootTest
+@Transactional
 class BookingFacadeTest {
 
     @Autowired
@@ -26,17 +31,17 @@ class BookingFacadeTest {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
+    @Autowired
+    CacheManager cacheManager;
+
     @BeforeEach
     void setUp() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(EventApp.class);
-        bookingFacade = context.getBean(BookingFacadeImpl.class);
     }
 
     @AfterEach
+    @CacheEvict(value = "eventCache", allEntries = true)
     void cleanup() {
-        CacheManager.getInstance().getCache("eventCache").removeAll();
-        CacheManager.getInstance().getCache("userCache").removeAll();
-        CacheManager.getInstance().getCache("userAccountCache").removeAll();
+        cacheManager.getCacheNames().forEach(cacheName -> cacheManager.getCache(cacheName).clear());
     }
 
     @Test
@@ -93,6 +98,7 @@ class BookingFacadeTest {
     void createEvent() throws ParseException {
         Event newEvent = new Event(4, "New Event", dateFormat.parse("15-05-2023"), BigDecimal.valueOf(10.00).setScale(2));
         bookingFacade.createEvent(newEvent);
+
         Event polledNewEvent = bookingFacade.getEventById(4);
 
         assertEquals(newEvent.getId(), polledNewEvent.getId());
@@ -211,9 +217,6 @@ class BookingFacadeTest {
         assertThrows(IllegalStateException.class, () -> {
             Ticket ticket = bookingFacade.bookTicket(userId, eventId, place, category);
         }, "Illegal State Exception was expected");
-
-//        BigDecimal userAccountBalanceBeforeTicketReservation = bookingFacade.userAccountService.getUserAccountByUserId(2).getFunds();
-//        assertEquals(BigDecimal.valueOf(200.00).setScale(2), userAccountBalanceBeforeTicketReservation);
     }
 
     @Test
@@ -254,15 +257,15 @@ class BookingFacadeTest {
     }
 
     @Test
-    void bookTicketForNewlyCreatedEventAndUser() throws ParseException {
-        Event event = new Event(4, "New Event", dateFormat.parse("07-07-2023"), BigDecimal.valueOf(10.00));
-        bookingFacade.createEvent(event);
+    void bookTicketForNewlyCreatedEventAndUser() throws Exception {
+        Event event = new Event( "New Event", dateFormat.parse("07-07-2023"), BigDecimal.valueOf(10.00));
+        Event createdEvent = bookingFacade.createEvent(event);
 
-        User user = new User(7, "Newes Userus", "n.u@gmail.com");
-        bookingFacade.createUser(user);
-        bookingFacade.topUpUserAccount(7, BigDecimal.valueOf(100.00));
+        User user = new User( "Newes Userus", "n.u@gmail.com");
+        User createdUser = bookingFacade.createUser(user);
+        bookingFacade.topUpUserAccount(createdUser.getId(), BigDecimal.valueOf(100.00));
 
-        Ticket ticket = bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);
+        Ticket ticket = bookingFacade.bookTicket(createdUser.getId(), createdEvent.getId(), 1, Ticket.Category.PREMIUM);
         List<Ticket> ticketsByEvent = bookingFacade.getBookedTickets(event, 2, 0);
         List<Ticket> ticketsByUser = bookingFacade.getBookedTickets(user, 2, 0);
 
@@ -271,7 +274,7 @@ class BookingFacadeTest {
         assertEquals(1, ticketsByEvent.size());
         assertEquals(ticketsByEvent, ticketsByUser);
 
-        UserAccount newUserAccount = bookingFacade.getUserAccountByUserId(7);
+        UserAccount newUserAccount = bookingFacade.getUserAccountByUserId(createdUser.getId());
         assertEquals(BigDecimal.valueOf(90.00).setScale(2), newUserAccount.getFunds());
     }
 
@@ -299,16 +302,21 @@ class BookingFacadeTest {
         bookingFacade.getUserAccountById(6);
 
 
-        int eventCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
-                .getCache("eventCache").getSize();
-        int userCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
-                .getCache("userCache").getSize();
-        int userAccountCacheSize = CacheManager.ALL_CACHE_MANAGERS.get(0)
-                .getCache("userAccountCache").getSize();
+        Cache eventCache = cacheManager.getCache("eventCache");
+        Cache userCache = cacheManager.getCache("userCache");
+        Cache userAccountCache = cacheManager.getCache("userAccountCache");
 
-
-        assertTrue(eventCacheSize == 2);
-        assertTrue(userCacheSize == 2);
-        assertTrue(userAccountCacheSize == 3);
+        assertTrue(eventCache.containsKey(1L));
+        assertTrue(eventCache.containsKey(2L));
+        assertFalse(eventCache.containsKey(3L));
+        assertTrue(userCache.containsKey(1L));
+        assertFalse(userCache.containsKey(2L));
+        assertTrue(userCache.containsKey(3L));
+        assertFalse(userAccountCache.containsKey(1L));
+        assertTrue(userAccountCache.containsKey(2L));
+        assertFalse(userAccountCache.containsKey(3L));
+        assertTrue(userAccountCache.containsKey(4L));
+        assertFalse(userAccountCache.containsKey(5L));
+        assertTrue(userAccountCache.containsKey(6L));
     }
 }

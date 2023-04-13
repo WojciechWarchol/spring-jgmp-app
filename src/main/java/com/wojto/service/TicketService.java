@@ -33,7 +33,7 @@ public class TicketService {
         return page.getContent();
     }
 
-    @Cacheable("ticketCache")
+    @Cacheable(value="ticketCache", key="#ticketId", unless="#result == null")
     public Ticket findTicketById(long ticketId) {
         LOGGER.info("Calling TicketDao for ticket with id: " + ticketId);
         return ticketDao.getTicketById(ticketId);
@@ -57,12 +57,12 @@ public class TicketService {
         List<Ticket> ticketsBookedForEvent = ticketDao.getBookedTickets(eventId);
         boolean placeBooked = ticketsBookedForEvent.stream().anyMatch(t -> t.getPlace() == place);
         if (placeBooked) {
-            LOGGER.error(String.format("The place: %d, on event: %d is already booked!", place, eventId));
-            throw new IllegalStateException();
+            String errorMessage = String.format("The place: %d, on event: %d is already booked!", place, eventId);
+            LOGGER.error(errorMessage);
+            throw new IllegalStateException(errorMessage);
         } else {
-            newTicket = new Ticket(0, eventId, userId, category, place);
+            newTicket = ticketDao.bookTicket(new Ticket(0, eventId, userId, category, place));
             LOGGER.info("Place is free, booked ticket: " + newTicket);
-            ticketDao.bookTicket(newTicket);
         }
         return newTicket;
     }

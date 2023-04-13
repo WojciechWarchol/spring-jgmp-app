@@ -1,11 +1,12 @@
 package com.wojto.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name="user_accounts")
-public class UserAccount {
+@Table(name = "user_accounts")
+public class UserAccount implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

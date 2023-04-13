@@ -31,7 +31,7 @@ public class UserService {
         return page.getContent();
     }
 
-    @Cacheable("userCache")
+    @Cacheable(value="userCache", key="#userId", unless="#result == null")
     public User getUserById(long userId) {
         LOGGER.info("Calling UserDao for user with id: " + userId);
         return userDao.getUserById(userId);

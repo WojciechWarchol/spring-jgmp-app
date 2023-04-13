@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event App</title>
+</head>
+<body>
+<h2 th:if="${event}">Edit Event:</h2>
+<h2 th:unless="${event}">Create Event:</h2>
+<form th:if="${event == null}" action="/events/createEvent" method="post">
+    <input name="title" placeholder="Title">
+    <input type="date" name="day" placeholder="Date">
+    <input name="ticketPrice" placeholder="Ticket Price">
+    <input type="submit" value="Create">
+</form>
+<form th:if="${event != null}" th:action="@{/events/updateEvent}" th:method="put">
+    <input type="hidden" name="id" th:value="${event.id}">
+    <input name="title" th:value="${event.title}" placeholder="Title">
+    <input type="date" name="day" th:value="${event.date}" placeholder="Date">
+    <input name="ticketPrice" th:value="${event.ticketPrice}" placeholder="Ticket Price">
+    <input type="submit" value="Update">
+</form>
+</body>
+</html>

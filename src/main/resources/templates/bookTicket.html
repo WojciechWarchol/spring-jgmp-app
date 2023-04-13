@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event App</title>
+</head>
+<body>
+<h2>Book Ticket:</h2>
+<form action="/tickets/bookTicket" method="post">
+    <input name="userId" value="" placeholder="User ID">
+    <input name="eventId" value="" placeholder="Event ID">
+    <input name="place" value="" placeholder="Place">
+    <select name="category">
+        <option value="STANDARD">Standard</option>
+        <option value="PREMIUM">Premium</option>
+        <option value="BAR">Bar</option>
+    </select>
+    <input type="submit" value="Book Ticket"/>
+</form>
+</body>
+</html>

@@ -1,9 +1,12 @@
 package com.wojto.facade;
 
+import com.wojto.controller.TicketController;
+import com.wojto.exception.TicketXmlUnmarshallingException;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
 import com.wojto.model.UserAccount;
+import com.wojto.model.generator.TicketUtils;
 import com.wojto.service.EventService;
 import com.wojto.service.TicketService;
 import com.wojto.service.UserAccountService;
@@ -12,14 +15,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
+@Transactional
 public class BookingFacadeImpl implements BookingFacade{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BookingFacadeImpl.class);
@@ -32,6 +42,8 @@ public class BookingFacadeImpl implements BookingFacade{
     TicketService ticketService;
     @Autowired
     UserAccountService userAccountService;
+    @Autowired
+    PlatformTransactionManager transactionManager;
 
     public BookingFacadeImpl(EventService eventService, UserService userService, TicketService ticketService) {
         this.eventService = eventService;
@@ -119,22 +131,22 @@ public class BookingFacadeImpl implements BookingFacade{
     @Override
     @Transactional
     public Ticket bookTicket(long userId, long eventId, int place, Ticket.Category category) {
-        LOGGER.info(
-                String.format("Calling Event Service, UserAccount Service and TicketService to book ticket with userId: %d, eventId: %d, place: %d, category: %s",
-                        userId, eventId, place, category));
-        LOGGER.info("Checking ticket price for event: " + eventId);
-        Event event = eventService.findEventById(eventId);
-        BigDecimal ticketPrice = event.getTicketPrice();
-        LOGGER.info("Attempting to deduct payment for ticket: " + ticketPrice + " from user: " + userId);
-        boolean fundDeductionSuccessful = userAccountService.deductFundsFromAccount(userId, ticketPrice);
-        if (fundDeductionSuccessful) {
-            LOGGER.info("Proceeding to book ticket after successfully deducting payment");
-            Ticket bookedTicket = ticketService.bookTicket(userId, eventId, place, category);
-            return bookedTicket;
-        } else {
-            LOGGER.error("Payment deduction failed. Performing rollback");
-            throw new IllegalStateException("Payment deduction failed!");
-        }
+            LOGGER.info(
+                    String.format("Calling Event Service, UserAccount Service and TicketService to book ticket with userId: %d, eventId: %d, place: %d, category: %s",
+                            userId, eventId, place, category));
+            LOGGER.info("Checking ticket price for event: " + eventId);
+            Event event = eventService.findEventById(eventId);
+            BigDecimal ticketPrice = event.getTicketPrice();
+            LOGGER.info("Attempting to deduct payment for ticket: " + ticketPrice + " from user: " + userId);
+            boolean fundDeductionSuccessful = userAccountService.deductFundsFromAccount(userId, ticketPrice);
+            if (fundDeductionSuccessful) {
+                LOGGER.info("Proceeding to book ticket after successfully deducting payment");
+                Ticket bookedTicket = ticketService.bookTicket(userId, eventId, place, category);
+                return bookedTicket;
+            } else {
+                LOGGER.error("Payment deduction failed. Performing rollback");
+                throw new IllegalStateException("Payment deduction failed!");
+            }
     }
 
     @Override
@@ -181,5 +193,32 @@ public class BookingFacadeImpl implements BookingFacade{
     public UserAccount topUpUserAccount(long userId, BigDecimal amount) {
         LOGGER.info("Calling UserAccountService to top up account of user: " + userId + " in the ammount of: " + amount);
         return userAccountService.topUpUserAccount(userId, amount);
+    }
+
+    public void bookTicketsFromMultipartFile(MultipartFile file, List<Ticket> ticketList, TicketController ticketController) {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                List<Ticket> unmarshalledTickets = null;
+                try {
+                    unmarshalledTickets = TicketUtils.createTicketListFromMultipartFile(file);
+                    ticketList.addAll(unmarshalledTickets.stream()
+                            .map(ticket -> {
+                                long userId = ticket.getUserId();
+                                long eventId = ticket.getEventId();
+                                int place = ticket.getPlace();
+                                Ticket.Category category = ticket.getCategory();
+                                return bookTicket(userId, eventId, place, category);
+                            })
+                            .collect(Collectors.toList()));
+                } catch (Exception e) {
+                    String errorMessage = "Error during XML Unmarshalling";
+                    LOGGER.error(errorMessage);
+                    throw new TicketXmlUnmarshallingException(errorMessage);
+                }
+
+            }
+        });
     }
 }

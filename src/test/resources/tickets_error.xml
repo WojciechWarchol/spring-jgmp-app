@@ -1,0 +1,9 @@
+<tickets>
+
+	<ticket userId="1" eventId="1" category="BAR" place="10"/>
+
+	<ticket userId="1" eventId="1" category="BAR" place="11"/>
+
+	<ticket userId="1" eventId="1" category="BAR" place="12"/>
+
+</tickets>

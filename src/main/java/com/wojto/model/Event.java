@@ -1,14 +1,13 @@
 package com.wojto.model;
 
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
 @Table(name = "events")
-public class Event{
+public class Event implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +24,12 @@ public class Event{
 
     public Event(long id, String title, Date date, BigDecimal ticketPrice) {
         this.id = id;
+        this.title = title;
+        this.date = date;
+        this.ticketPrice = ticketPrice;
+    }
+
+    public Event(String title, Date date, BigDecimal ticketPrice) {
         this.title = title;
         this.date = date;
         this.ticketPrice = ticketPrice;
@@ -71,7 +76,7 @@ public class Event{
 
         if (id != event.id) return false;
         if (!title.equals(event.title)) return false;
-        if (!date.equals(event.date)) return false;
+        if (!(date.compareTo(event.date) == 0)) return false;
         return ticketPrice.equals(event.ticketPrice);
     }
 
