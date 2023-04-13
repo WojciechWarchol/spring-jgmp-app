@@ -7,7 +7,7 @@ CREATE TABLE events (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(120) NOT NULL,
     date DATETIME,
-    ticketPrice DECIMAL(5,2) NOT NULL
+    ticket_price DECIMAL(5,2) NOT NULL
 );
 
 CREATE TABLE users (
@@ -18,8 +18,8 @@ CREATE TABLE users (
 
 CREATE TABLE tickets (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    eventId BIGINT NOT NULL,
-    userId BIGINT NOT NULL,
+    event_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
     category ENUM('STANDARD', 'PREMIUM', 'BAR'),
     place INT NOT NULL
 --    CONSTRAINT fk_event
@@ -32,6 +32,6 @@ CREATE TABLE tickets (
 
 CREATE TABLE user_accounts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    userId BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
     funds DECIMAL(6,2) NOT NULL
 );
