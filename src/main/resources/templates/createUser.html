@@ -12,7 +12,7 @@
     <input name="name" placeholder="Name">
     <input type="submit" value="Create">
 </form>
-<form th:if="${user != null}" action="/users/updateUser" method="post" enctype="application/json">
+<form th:if="${user != null}" th:action="@{/users/updateUser}" th:method="put" enctype="application/json">
     <input type="hidden" name="id" th:value="${user.id}">
     <input name="email" th:value="${user.email}" placeholder="Email">
     <input name="name" th:value="${user.name}" placeholder="Name">

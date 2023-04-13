@@ -33,7 +33,7 @@ public class TicketService {
         return page.getContent();
     }
 
-    @Cacheable("ticketCache")
+    @Cacheable(value="ticketCache", key="#ticketId", unless="#result == null")
     public Ticket findTicketById(long ticketId) {
         LOGGER.info("Calling TicketDao for ticket with id: " + ticketId);
         return ticketDao.getTicketById(ticketId);

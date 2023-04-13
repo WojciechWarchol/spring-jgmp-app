@@ -1,35 +1,32 @@
 package com.wojto.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wojto.EventAppConfig;
 import com.wojto.model.User;
-import net.sf.ehcache.CacheManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.cache.CacheManager;
 import java.math.BigDecimal;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ContextConfiguration(classes = {EventAppConfig.class})
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 @WebAppConfiguration(value = "/src/main/resources")
+@Transactional
 class UserControllerIntegrationTest {
+
+    @Autowired
+    CacheManager cacheManager;
 
     private MockMvc mockMvc;
 
@@ -43,13 +40,12 @@ class UserControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(EventAppConfig.class);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
     @AfterEach
     void cleanup() {
-        CacheManager.getInstance().getCache("userCache").removeAll();
+        cacheManager.getCacheNames().forEach(cacheName -> cacheManager.getCache(cacheName).clear());
     }
 
     @Test

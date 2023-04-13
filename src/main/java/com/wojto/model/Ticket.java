@@ -5,17 +5,18 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 @Entity
 @Table(name="tickets")
 @XmlRootElement(name="ticket")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Ticket {
+public class Ticket implements Serializable {
 
     public enum Category {STANDARD, PREMIUM, BAR}
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlAttribute(name = "Id")
     private long id;
     @Column

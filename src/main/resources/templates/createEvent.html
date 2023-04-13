@@ -13,7 +13,7 @@
     <input name="ticketPrice" placeholder="Ticket Price">
     <input type="submit" value="Create">
 </form>
-<form th:if="${event != null}" action="/events/updateEvent" method="post">
+<form th:if="${event != null}" th:action="@{/events/updateEvent}" th:method="put">
     <input type="hidden" name="id" th:value="${event.id}">
     <input name="title" th:value="${event.title}" placeholder="Title">
     <input type="date" name="day" th:value="${event.date}" placeholder="Date">

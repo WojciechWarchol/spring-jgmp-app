@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,7 +96,7 @@ public class TicketController {
         return "index";
     }
 
-    @PostMapping("/cancelTicket")
+    @DeleteMapping("/cancelTicket")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     String cancelTicket(@RequestParam("ticketId") long ticketId) {
         LOGGER.debug("TicketController.deleteTicket() method called");

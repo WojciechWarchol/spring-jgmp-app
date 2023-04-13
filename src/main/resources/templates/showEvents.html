@@ -29,7 +29,7 @@
                 </form>
             </td>
             <td>
-                <form th:action="@{/events/deleteEvent}" method="post">
+                <form th:action="@{/events/deleteEvent}" th:method="delete">
                     <input type="hidden" name="eventId" th:value="${event.id}" />
                     <button type="submit">Delete</button>
                 </form>

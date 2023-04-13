@@ -20,7 +20,7 @@
             <td th:text="${user.email}"/>
             <td th:text="${user.name}"/>
             <td>
-                <form th:action="@{/userAccounts/getUserAccountByUserId}" method="get">
+                <form th:action="@{/userAccounts/byUserId}" method="get">
                     <input type="hidden" name="userId" th:value="${user.id}" />
                     <button type="submit">Show User Account</button>
                 </form>
@@ -32,7 +32,7 @@
                 </form>
             </td>
             <td>
-                <form th:action="@{/users/deleteUser}" method="post">
+                <form th:action="@{/users/deleteUser}" th:method="delete">
                     <input type="hidden" name="userId" th:value="${user.id}" />
                     <button type="submit">Delete</button>
                 </form>

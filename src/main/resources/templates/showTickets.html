@@ -24,7 +24,7 @@
             <td th:text="${ticket.place}"/>
             <td th:text="${ticket.category}"/>
             <td>
-                <form th:action="@{/tickets/cancelTicket}" method="post">
+                <form th:action="@{/tickets/cancelTicket}" th:method="delete">
                     <input type="hidden" name="ticketId" th:value="${ticket.id}" />
                     <button type="submit">Cancel Ticket</button>
                 </form>

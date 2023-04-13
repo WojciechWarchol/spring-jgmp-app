@@ -1,23 +1,17 @@
 package com.wojto.controller;
 
-import com.wojto.EventAppConfig;
 import com.wojto.facade.BookingFacade;
 import com.wojto.model.Event;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.ui.Model;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,15 +24,10 @@ import static java.math.BigDecimal.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(EventController.class)
-@ContextConfiguration(classes = {EventAppConfig.class})
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @Import(EventController.class)
 class EventControllerUnitTest {
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private EventController eventController;

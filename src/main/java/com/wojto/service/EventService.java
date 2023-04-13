@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class EventService {
         return page.getContent();
     }
 
-    @Cacheable("eventCache")
+    @Cacheable(value="eventCache", key="#id", unless="#result == null")
     public Event findEventById(long id) {
         LOGGER.info("Calling EventDao for event with id: " + id);
         return eventDao.getEventById(id);

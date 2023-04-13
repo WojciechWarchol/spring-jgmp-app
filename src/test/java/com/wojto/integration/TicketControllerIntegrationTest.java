@@ -1,37 +1,31 @@
 package com.wojto.integration;
 
-import com.wojto.EventAppConfig;
-import com.wojto.model.Event;
 import com.wojto.model.Ticket;
-import net.sf.ehcache.CacheManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.cache.CacheManager;
 import java.math.BigDecimal;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ContextConfiguration(classes = {EventAppConfig.class})
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 @WebAppConfiguration(value = "/src/main/resources")
+@Transactional
 class TicketControllerIntegrationTest {
+
+    @Autowired
+    CacheManager cacheManager;
 
     private MockMvc mockMvc;
 
@@ -45,13 +39,12 @@ class TicketControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(EventAppConfig.class);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
     @AfterEach
     void tearDown() {
-        CacheManager.getInstance().getCache("ticketCache").removeAll();
+        cacheManager.getCacheNames().forEach(cacheName -> cacheManager.getCache(cacheName).clear());
     }
 
     @Test
@@ -104,7 +97,7 @@ class TicketControllerIntegrationTest {
         Long ticketIdToDelete = 7L;
         BigDecimal userAccountAfterRefund = BigDecimal.valueOf(180.30).setScale(2);
 
-        mockMvc.perform(post("/tickets/cancelTicket")
+        mockMvc.perform(delete("/tickets/cancelTicket")
                         .param("ticketId", Long.toString(ticketIdToDelete)))
                 .andExpect(status().isNoContent())
                 .andExpect(view().name(INDEX_VIEW_NAME));
