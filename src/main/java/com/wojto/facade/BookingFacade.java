@@ -1,7 +1,6 @@
 package com.wojto.facade;
 
 
-import com.wojto.controller.TicketController;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
@@ -150,5 +149,5 @@ public interface BookingFacade {
 
     UserAccount topUpUserAccount(long userId, BigDecimal amount);
 
-    void bookTicketsFromMultipartFile(MultipartFile file, List<Ticket> ticketList, TicketController ticketController);
+    List<Ticket> bookTicketsFromMultipartFile(MultipartFile file);
 }

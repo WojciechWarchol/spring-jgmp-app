@@ -15,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class TicketController {
 
     @GetMapping(value = "/forUser", produces = "application/pdf")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<byte[]> getPdfForUser(@RequestParam("userId") long userId) throws IOException, DocumentException {
+    public ResponseEntity<byte[]> getPdfForUser(@RequestParam("userId") long userId) throws DocumentException {
         LOGGER.debug("TicketController.getPdfForUser() method called");
         List<Ticket> ticketList = new ArrayList<>();
         User user = bookingFacade.getUserById(userId);
@@ -108,9 +107,8 @@ public class TicketController {
     @ResponseStatus(HttpStatus.CREATED)
     String bookTickets(@RequestParam("file") MultipartFile file, Model model) throws Exception {
         LOGGER.debug("TicketController.bookTickets() method called");
-        List<Ticket> ticketList = new ArrayList<>();
 
-        bookingFacade.bookTicketsFromMultipartFile(file, ticketList, this);
+        List<Ticket> ticketList = bookingFacade.bookTicketsFromMultipartFile(file);
 
         model.addAttribute("ticketList", ticketList);
         return "showTickets";
