@@ -16,6 +16,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <spring.boot.version>2.7.10</spring.boot.version>
+        <artemis.verison>2.19.1</artemis.verison>
     </properties>
 
     <dependencies>
@@ -53,6 +54,27 @@
             <version>${spring.boot.version}</version>
         </dependency>
 
+        <!-- Messaging -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-artemis</artifactId>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.activemq</groupId>-->
+<!--            <artifactId>artemis-core-client</artifactId>-->
+<!--            <version>${artemis.verison}</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jms-server</artifactId>
+<!--            <version>${artemis.verison}</version>-->
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.activemq</groupId>-->
+<!--            <artifactId>artemis-commons</artifactId>-->
+<!--            <version>${artemis.verison}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
@@ -82,6 +104,7 @@
             <version>3.10.6</version>
         </dependency>
 
+        <!-- XML parsing? -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -98,6 +121,7 @@
             <version>2.3.4</version>
         </dependency>
 
+        <!-- Logging implementation -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -109,6 +133,7 @@
             <version>2.0.6</version>
         </dependency>
 
+        <!-- Html templating -->
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
@@ -140,6 +165,7 @@
             <version>2.11.0</version>
         </dependency>
 
+        <!-- Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

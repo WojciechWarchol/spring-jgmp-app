@@ -44,6 +44,13 @@ public class Ticket implements Serializable {
         this.place = place;
     }
 
+    public Ticket(long eventId, long userId, Category category, int place) {
+        this.eventId = eventId;
+        this.userId = userId;
+        this.category = category;
+        this.place = place;
+    }
+
     public long getId() {
         return id;
     }

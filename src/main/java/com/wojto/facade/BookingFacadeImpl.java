@@ -128,6 +128,12 @@ public class BookingFacadeImpl implements BookingFacade{
     }
 
     @Override
+    public Ticket bookTicket(Ticket ticket) {
+        LOGGER.info(String.format("Calling bookTicket method with ticket: " + ticket.toString()));
+        return bookTicket(ticket.getUserId(), ticket.getEventId(), ticket.getPlace(), ticket.getCategory());
+    }
+
+    @Override
     @Transactional
     public Ticket bookTicket(long userId, long eventId, int place, Ticket.Category category) {
             LOGGER.info(
