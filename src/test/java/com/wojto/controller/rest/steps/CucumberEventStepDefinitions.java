@@ -8,9 +8,6 @@ import com.wojto.dao.DBUserRepository;
 import com.wojto.facade.BookingFacade;
 import com.wojto.model.Event;
 import com.wojto.service.EventService;
-import com.wojto.service.TicketService;
-import com.wojto.service.UserAccountService;
-import com.wojto.service.UserService;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
@@ -37,8 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = EventRestController.class)
-//@AutoConfigureMockMvc
-//@SpringBootTest
 @CucumberContextConfiguration
 public class CucumberEventStepDefinitions {
 
@@ -58,12 +53,6 @@ public class CucumberEventStepDefinitions {
 
     @MockBean
     private EventService eventService;
-    @MockBean
-    private UserService userService;
-    @MockBean
-    private TicketService ticketService;
-    @MockBean
-    private UserAccountService userAccountService;
     @MockBean
     private DBEventRepository dbEventRepository;
     @MockBean
