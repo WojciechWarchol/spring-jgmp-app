@@ -1,4 +1,4 @@
-package com.wojto.controller;
+package com.wojto.controller.rest;
 
 import com.itextpdf.text.DocumentException;
 import com.wojto.facade.BookingFacade;
@@ -10,41 +10,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
-@RequestMapping("/tickets")
-public class TicketController {
+@RestController
+@RequestMapping("/api/tickets")
+public class TicketRestController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(TicketController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TicketRestController.class);
 
     @Autowired
     BookingFacade bookingFacade;
 
     @GetMapping("/forUser")
     @ResponseStatus(HttpStatus.OK)
-    String getTicketsForUser(@RequestParam("userId") long userId, Model model) {
-        LOGGER.debug("TicketController.getTicketsForUser() method called");
+    List<Ticket> getTicketsForUser(@RequestParam("userId") long userId) {
+        LOGGER.debug("TicketRestController.getTicketsForUser() method called");
         List<Ticket> ticketList = new ArrayList<>();
         User user = bookingFacade.getUserById(userId);
         List<Ticket> foundTickets = bookingFacade.getBookedTickets(user, 10, 0);
 
         if (foundTickets != null) ticketList.addAll(foundTickets);
-        model.addAttribute("ticketList", ticketList);
 
-        return "showTickets";
+        return ticketList;
     }
 
-    @GetMapping(value = "/forUser", produces = "application/pdf")
+    @GetMapping(value = "/forUserInPdf", produces = "application/pdf")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<byte[]> getPdfForUser(@RequestParam("userId") long userId) throws DocumentException {
-        LOGGER.debug("TicketController.getPdfForUser() method called");
+        LOGGER.debug("TicketRestController.getPdfForUser() method called");
         List<Ticket> ticketList = new ArrayList<>();
         User user = bookingFacade.getUserById(userId);
         List<Ticket> foundTickets = bookingFacade.getBookedTickets(user, 10, 0);
@@ -66,52 +63,48 @@ public class TicketController {
 
     @GetMapping("/forEvent")
     @ResponseStatus(HttpStatus.OK)
-    String getTicketsForEvent(@RequestParam("eventId") long eventId, Model model) {
-        LOGGER.debug("TicketController.getTicketsForEvent() method called");
+    List<Ticket> getTicketsForEvent(@RequestParam("eventId") long eventId) {
+        LOGGER.debug("TicketRestController.getTicketsForEvent() method called");
         List<Ticket> ticketList = new ArrayList<>();
         Event event = bookingFacade.getEventById(eventId);
         List<Ticket> foundTickets = bookingFacade.getBookedTickets(event, 10, 0);
 
         if (foundTickets != null) ticketList.addAll(foundTickets);
-        model.addAttribute("ticketList", ticketList);
 
-        return "showTickets";
+        return ticketList;
     }
 
-    @GetMapping("/bookTicketForm")
-    String goToBookTicketForm() {
-        LOGGER.debug("TicketController.goToBookTicketForm() method called");
-        return "bookTicket";
-    }
 
     @PostMapping("/bookTicket")
     @ResponseStatus(HttpStatus.CREATED)
-    String bookTicket(@RequestParam("userId") long userId,
+    Ticket bookTicket(@RequestParam("userId") long userId,
                       @RequestParam("eventId") long eventId,
                       @RequestParam("place") int place,
                       @RequestParam("category") Ticket.Category category) {
-        LOGGER.debug("TicketController.bookTicket() method called");
-        Ticket ticket = bookingFacade.bookTicket(userId, eventId, place, category);
-        return "index";
-    }
-
-    @DeleteMapping("/cancelTicket")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    String cancelTicket(@RequestParam("ticketId") long ticketId) {
-        LOGGER.debug("TicketController.deleteTicket() method called");
-        boolean ticketDeleted = bookingFacade.cancelTicket(ticketId);
-        return "index";
+        LOGGER.debug("TicketRestController.bookTicket() method called");
+        Ticket bookedTicket = bookingFacade.bookTicket(userId, eventId, place, category);
+        return bookedTicket;
     }
 
     @PostMapping("/bookTickets")
     @ResponseStatus(HttpStatus.CREATED)
-    String bookTickets(@RequestParam("file") MultipartFile file, Model model) throws Exception {
-        LOGGER.debug("TicketController.bookTickets() method called");
+    List<Ticket> bookTickets(@RequestParam("file") MultipartFile file) throws Exception {
+        LOGGER.debug("TicketRestController.bookTickets() method called");
 
         List<Ticket> ticketList = bookingFacade.bookTicketsFromMultipartFile(file);
 
-        model.addAttribute("ticketList", ticketList);
-        return "showTickets";
+        return ticketList;
     }
 
+    @DeleteMapping("/cancelTicket")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    ResponseEntity<Void> cancelTicket(@RequestParam("ticketId") long ticketId) {
+        LOGGER.debug("TicketRestController.deleteTicket() method called");
+        boolean ticketDeleted = bookingFacade.cancelTicket(ticketId);
+        if (ticketDeleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

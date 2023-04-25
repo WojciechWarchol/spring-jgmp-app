@@ -1,6 +1,5 @@
 package com.wojto.facade;
 
-import com.wojto.controller.TicketController;
 import com.wojto.exception.TicketXmlUnmarshallingException;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
@@ -22,8 +21,8 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -129,6 +128,12 @@ public class BookingFacadeImpl implements BookingFacade{
     }
 
     @Override
+    public Ticket bookTicket(Ticket ticket) {
+        LOGGER.info(String.format("Calling bookTicket method with ticket: " + ticket.toString()));
+        return bookTicket(ticket.getUserId(), ticket.getEventId(), ticket.getPlace(), ticket.getCategory());
+    }
+
+    @Override
     @Transactional
     public Ticket bookTicket(long userId, long eventId, int place, Ticket.Category category) {
             LOGGER.info(
@@ -195,8 +200,9 @@ public class BookingFacadeImpl implements BookingFacade{
         return userAccountService.topUpUserAccount(userId, amount);
     }
 
-    public void bookTicketsFromMultipartFile(MultipartFile file, List<Ticket> ticketList, TicketController ticketController) {
+    public List<Ticket> bookTicketsFromMultipartFile(MultipartFile file) {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        List<Ticket> ticketList = new ArrayList<>();
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
@@ -220,5 +226,7 @@ public class BookingFacadeImpl implements BookingFacade{
 
             }
         });
+
+        return ticketList;
     }
 }

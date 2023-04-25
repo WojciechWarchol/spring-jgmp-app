@@ -27,7 +27,7 @@ public class UserController {
     @GetMapping("/byId")
     @ResponseStatus(HttpStatus.OK)
     String getUserById(@RequestParam("userId") long userId, Model model) {
-        LOGGER.debug("userController.getUserById() method called");
+        LOGGER.debug("UserController.getUserById() method called");
         List<User> userList = new ArrayList<>();
         User user = bookingFacade.getUserById(userId);
 
@@ -53,7 +53,7 @@ public class UserController {
 
     @GetMapping("/byName")
     @ResponseStatus(HttpStatus.OK)
-    String getUsersByName(@RequestParam("name") String name, Model model) throws ParseException {
+    String getUsersByName(@RequestParam("name") String name, Model model) {
         LOGGER.debug("UserController.getUsersByName() method called");
         List<User> userList = new ArrayList<>();
         List<User> foundUsers = bookingFacade.getUsersByName(name, 10, 0);

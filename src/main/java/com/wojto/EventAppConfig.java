@@ -31,4 +31,5 @@ public class EventAppConfig {
     public HandlerExceptionResolver customHandlerExceptionResolver() {
         return new CustomHandlerExceptionResolver();
     }
+
 }

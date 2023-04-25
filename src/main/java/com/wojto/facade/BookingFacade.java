@@ -1,7 +1,6 @@
 package com.wojto.facade;
 
 
-import com.wojto.controller.TicketController;
 import com.wojto.model.Event;
 import com.wojto.model.Ticket;
 import com.wojto.model.User;
@@ -109,6 +108,13 @@ public interface BookingFacade {
     boolean deleteUser(long userId);
 
     /**
+     * Method added specifically for use with the JMS Listener.
+     * @param ticket ticket (probably without ticketId)
+     * @return ticket saved in DB
+     */
+    Ticket bookTicket(Ticket ticket);
+
+    /**
      * Book ticket for a specified event on behalf of specified user.
      * @param userId User Id.
      * @param eventId Event Id.
@@ -150,5 +156,5 @@ public interface BookingFacade {
 
     UserAccount topUpUserAccount(long userId, BigDecimal amount);
 
-    void bookTicketsFromMultipartFile(MultipartFile file, List<Ticket> ticketList, TicketController ticketController);
+    List<Ticket> bookTicketsFromMultipartFile(MultipartFile file);
 }
